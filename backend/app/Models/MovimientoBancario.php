@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class MovimientoBancario extends Model
+{
+    use HasFactory;
+
+    protected $table = 'movimientos_bancarios';
+
+    protected $fillable = ['banco_id', 'tipo_movimiento', 'concepto', 'fecha', 'referencia', 'monto', 'metodo_pago'];
+
+    protected $hidden = ['banco_id'];
+
+    public function banco()
+    {
+        return $this->belongsTo(Banco::class, 'banco_id')->select(['id', 'nombre']);
+    }
+}
