@@ -39,6 +39,13 @@ export const formOptions = {
       required: true,
       type: 'number',
       step: '0.01',
+      label: 'Porcentaje de impuestos (si no aplica introducir 0) *',
+      name: 'impuesto'
+    },
+    {
+      required: true,
+      type: 'number',
+      step: '0.01',
       label: 'Total *',
       name: 'total'
     }

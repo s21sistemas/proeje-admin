@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('apellido_p', 100);
             $table->string('apellido_m', 100);
             $table->string('correo', 100)->unique();
-            $table->string('codigo_acceso', 10);
             $table->string('calle', 100);
             $table->string('numero', 20);
             $table->string('colonia', 50);
@@ -49,8 +48,19 @@ return new class extends Migration
             $table->date('fecha_antidoping')->nullable();
 
             $table->enum('estatus', ['Disponible', 'Descansado', 'Dado de baja', 'Asignado'])->default('Disponible');
-            $table->enum('rango', ['Guardia', 'Supervisor', 'Jefe de grupo'])->default('Guardia');
+            $table->enum('rango', ['Guardia', 'Supervisor', 'Jefe de turno'])->default('Guardia');
 
+            $table->decimal('sueldo_base', 10, 2);
+            $table->integer('dias_laborales');
+            $table->decimal('aguinaldo', 10, 2)->default(0);
+            $table->decimal('imss', 10, 2)->default(0);
+            $table->decimal('infonavit', 10, 2)->default(0);
+            $table->decimal('fonacot', 10, 2)->default(0);
+            $table->decimal('retencion_isr', 10, 2)->default(0);
+
+            $table->foreignId('sucursal_empresa_id')->constrained('sucursales_empresa');
+            $table->string('numero_empleado')->unique();
+            $table->boolean('eliminado')->default(false);
             $table->timestamps();
         });
     }

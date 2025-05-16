@@ -8,7 +8,8 @@ const moduloOptions = [
   { value: 'gastos', label: 'Gastos' },
   { value: 'ventas', label: 'Ventas' },
   { value: 'almacen', label: 'Almacén' },
-  { value: 'equipo', label: 'Equipo asignado' }
+  { value: 'equipo', label: 'Equipo asignado' },
+  { value: 'boletas-gasolina', label: 'Boletas de gasolina' }
 ]
 
 const metodoPagoOptions = [
@@ -47,6 +48,7 @@ export const FormReportes = ({
   handleInputChange,
   loadOptionsBancos,
   loadOptionsProveedores,
+  loadOptionsVehiculos,
   handleSubmit
 }) => {
   return (
@@ -172,6 +174,20 @@ export const FormReportes = ({
           onChange={handleInputChange}
           opcSelect={tipoMovimientoOptions}
           classInput='md:col-span-3'
+        />
+      )}
+
+      {formReport.modulo === 'boletas-gasolina' && (
+        <InputField
+          label='Vehículo'
+          id='vehiculo_id'
+          name='vehiculo_id'
+          type='async'
+          required={true}
+          value={formReport.vehiculo_id || ''}
+          onChange={handleInputChange}
+          loadOptions={loadOptionsVehiculos}
+          classInput='md:col-span-6'
         />
       )}
 

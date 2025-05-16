@@ -5,11 +5,23 @@ import dayjs from 'dayjs'
 
 import { useState } from 'react'
 import { getBanco } from '../api/bancos'
-import { getReporte } from '../api/reportes'
+import {
+  getEstadoCuentaBanco,
+  getEstadoCuentaCliente,
+  getEstadoCuentaGuardia,
+  getEstadoCuentaProveedor,
+  getReportRH,
+  getReporte
+} from '../api/reportes'
 import { getProveedor } from '../api/proveedores'
+import { getGuardias } from '../api/guardias'
+import { getCliente } from '../api/clientes'
+import { getVehiculo } from '../api/vehiculos'
+import { formatearMonedaMXN } from '../utils/formattedCurrancy'
 
 export const useReportes = () => {
   const [formReport, setFormReport] = useState({})
+  const [estado, setEstado] = useState(null)
 
   const exportToExcel = (data, columns, sheetName, fileName) => {
     if (!data || data.length === 0) {
@@ -96,6 +108,91 @@ export const useReportes = () => {
     }
   }
 
+  const loadOptionsGuardias = async () => {
+    try {
+      const response = await getGuardias()
+      return response.map((data) => ({
+        value: data.id,
+        label: data.nombre_completo
+      }))
+    } catch (error) {
+      console.error('Error cargando datos:', error)
+      return []
+    }
+  }
+
+  const loadOptionsGuardiasTodos = async () => {
+    try {
+      const response = await getGuardias()
+      const data = response.map((data) => ({
+        value: data.id,
+        label: data.nombre_completo
+      }))
+
+      if (data.length > 0) data.unshift({ label: 'Todos', value: 'todos' })
+      return data
+    } catch (error) {
+      console.error('Error cargando datos:', error)
+      return []
+    }
+  }
+
+  const loadOptionsProveedoresUnico = async () => {
+    try {
+      const response = await getProveedor()
+      return response.map((info) => ({
+        value: info.id,
+        label: info.nombre_empresa
+      }))
+    } catch (error) {
+      console.error('Error cargando datos:', error)
+      return []
+    }
+  }
+
+  const loadOptionsBancosUnico = async () => {
+    try {
+      const response = await getBanco()
+      return response.map((info) => ({
+        value: info.id,
+        label: info.nombre
+      }))
+    } catch (error) {
+      console.error('Error cargando datos:', error)
+      return []
+    }
+  }
+
+  const loadOptionsClientes = async () => {
+    try {
+      const response = await getCliente()
+
+      return response.map((data) => ({
+        value: data.id,
+        label: data.nombre_empresa
+      }))
+    } catch (error) {
+      console.error('Error cargando datos:', error)
+      return []
+    }
+  }
+
+  const loadOptionsVehiculos = async () => {
+    try {
+      const response = await getVehiculo()
+      const data = response.map((data) => ({
+        value: data.id,
+        label: `${data.tipo_vehiculo} (${data.placas})`
+      }))
+
+      if (data.length > 0) data.unshift({ label: 'Todos', value: 'todos' })
+      return data
+    } catch (error) {
+      console.error('Error cargando datos:', error)
+      return []
+    }
+  }
+
   const generateReport = async (form) => {
     try {
       const response = await getReporte(form)
@@ -108,7 +205,8 @@ export const useReportes = () => {
         gastos: transformExpenseData,
         ventas: transformSalesData,
         almacen: transformInventoryData,
-        equipo: transformEquipmentData
+        equipo: transformEquipmentData,
+        'boletas-gasolina': transformBoletasGasolina
       }
 
       // Configuraciones de reporte por módulo
@@ -192,6 +290,18 @@ export const useReportes = () => {
             'Equipo asignado',
             'Otro'
           ]
+        },
+        'boletas-gasolina': {
+          filename: 'Reporte de boletas de gasolina',
+          headers: [
+            'Vehículo',
+            'Kilometraje',
+            'Litros',
+            'Costo por litro',
+            'Costo total',
+            'Observaciones',
+            'Fecha'
+          ]
         }
       }
 
@@ -244,6 +354,193 @@ export const useReportes = () => {
     exportToExcel(data, headers, 'Reporte de cartera vencida', filename)
 
     // const newData =
+  }
+
+  const generateReportRH = async (form) => {
+    const response = await getReportRH(form)
+
+    const dataTransformers = {
+      incapacidades: transformIncapacidades,
+      'tiempo-extra': transformTiempoExtra,
+      faltas: transformFaltas,
+      descuentos: transformDescuentos,
+      vacaciones: transformVacaciones,
+      prestamos: transformPrestamos
+    }
+
+    // Configuraciones de reporte por módulo
+    const reportConfigs = {
+      incapacidades: {
+        filename: 'Reporte de incapacidades',
+        headers: [
+          'Guardia',
+          'Inicio de incapacidad',
+          'Fin de incapacidad',
+          'Pago por parte de la empresa',
+          'Motivo',
+          'Observaciones'
+        ]
+      },
+      'tiempo-extra': {
+        filename: 'Reporte de tiempo extra',
+        headers: [
+          'Guardia',
+          'Inicio del período de tiempo extra',
+          'Fin del período de tiempo extra',
+          'Horas extras trabajadas',
+          'Pago por hora',
+          'Pago total'
+        ]
+      },
+      faltas: {
+        filename: 'Reporte de faltas',
+        headers: [
+          'Guardia',
+          'Inicio del período de faltas',
+          'Fin del período de faltas',
+          'Cantidad de faltas',
+          'Monto descontado por faltas'
+        ]
+      },
+      descuentos: {
+        filename: 'Reporte de descuentos',
+        headers: [
+          'Guardia',
+          'Tipo de descuento',
+          'Monto del descuento',
+          'Fecha del descuento',
+          'Motivo del descuento'
+        ]
+      },
+      vacaciones: {
+        filename: 'Reporte de vacaciones',
+        headers: [
+          'Guardia',
+          'Inicio de vacaciones',
+          'Fin de vacaciones',
+          'Días totales de vacaciones',
+          'Prima vacacional',
+          'Obvservaciones'
+        ]
+      },
+      prestamos: {
+        filename: 'Reporte de prestamo',
+        headers: [
+          'Guardia',
+          'Monto del préstamo',
+          'Saldo restante del préstamo',
+          'Número de pagos acordados',
+          'Abonos pagados',
+          'Fecha del préstamo',
+          'Motivo',
+          'Obvservaciones',
+          'Estatus',
+          'Fecha del préstamo liquidado'
+        ]
+      }
+    }
+
+    // Transformar datos según el módulo
+    const transformer = dataTransformers[form.modulo] || (() => [])
+    const data = response.map(transformer)
+
+    // Obtener configuración del reporte
+    const config = reportConfigs[form.modulo] || {}
+
+    // Generar nombre de archivo con fecha
+    const filename = `${config.filename} ${dayjs().format('DD-MM-YYYY')}.xlsx`
+
+    // Exportar a Excel
+    exportToExcel(data, config.headers, config.filename, filename)
+  }
+
+  const generateEstadoCuentaGuardia = async (form) => {
+    const data = await getEstadoCuentaGuardia(form)
+    setEstado(data)
+  }
+
+  const generateEstadoCuentaCliente = async (form) => {
+    const data = await getEstadoCuentaCliente(form)
+    setEstado(data)
+  }
+
+  const generateEstadoCuentaProveedor = async (form) => {
+    const data = await getEstadoCuentaProveedor(form)
+    setEstado(data)
+  }
+
+  const generateEstadoCuentaBanco = async (form) => {
+    const data = await getEstadoCuentaBanco(form)
+    setEstado(data)
+  }
+
+  // Funciones de transformación específicas por módulo para RH
+  function transformIncapacidades(res) {
+    return {
+      guardia: formatGuardianName(res.guardia),
+      inicio_incapacidad: formatDate(res.fecha_inicio),
+      fin_incapacidad: formatDate(res.fecha_fin),
+      pago_empresa: formatCurrency(res.pago_empresa),
+      motivo: res.motivo,
+      observaciones: res.observaciones
+    }
+  }
+
+  function transformTiempoExtra(res) {
+    return {
+      guardia: formatGuardianName(res.guardia),
+      inicio_periodo: formatDate(res.fecha_inicio),
+      fin_periodo: formatDate(res.fecha_fin),
+      horas: res.horas,
+      monto_por_hora: formatCurrency(res.monto_por_hora),
+      monto_total: formatCurrency(res.monto_total)
+    }
+  }
+
+  function transformFaltas(res) {
+    return {
+      guardia: formatGuardianName(res.guardia),
+      inicio_periodo: formatDate(res.fecha_inicio),
+      fin_periodo: formatDate(res.fecha_fin),
+      cantidad_faltas: res.cantidad_faltas,
+      monto: formatCurrency(res.monto)
+    }
+  }
+
+  function transformDescuentos(res) {
+    return {
+      guardia: formatGuardianName(res.guardia),
+      tipo: res.tipo,
+      monto: formatCurrency(res.monto),
+      fecha: formatDate(res.fecha),
+      motivo: res.motivo
+    }
+  }
+
+  function transformVacaciones(res) {
+    return {
+      guardia: formatGuardianName(res.guardia),
+      inicio_periodo: formatDate(res.fecha_inicio),
+      fin_periodo: formatDate(res.fecha_fin),
+      dias_totales: res.dias_totales,
+      prima_vacacional: formatCurrency(res.prima_vacacional),
+      observaciones: res.observaciones
+    }
+  }
+
+  function transformPrestamos(res) {
+    return {
+      guardia: formatGuardianName(res.guardia),
+      monto_total: formatCurrency(res.monto_total),
+      saldo_restante: formatCurrency(res.saldo_restante),
+      numero_pagos: res.numero_pagos,
+      abonos_pagados: `${res.abonos.length}/${res.numero_pagos}`,
+      fecha_prestamo: formatDate(res.fecha_prestamo),
+      motivo: res.motivo,
+      observaciones: res.observaciones,
+      fecha_pagado: formatDate(res.fecha_pagado),
+      estatus: res.estatus
+    }
   }
 
   // Funciones de transformación específicas por módulo
@@ -333,6 +630,18 @@ export const useReportes = () => {
     }
   }
 
+  function transformBoletasGasolina(res) {
+    return {
+      vehiculo: `${res.vehiculo.tipo_vehiculo} (${res.vehiculo.placas})`,
+      kilometraje: res.kilometraje,
+      litros: res.litros,
+      costo_litro: formatearMonedaMXN(res.costo_litro),
+      costo_total: formatearMonedaMXN(res.costo_total),
+      observaciones: res.observaciones,
+      fecha: formatDate(res.created_at)
+    }
+  }
+
   // Funciones utilitarias
   function formatCurrency(amount) {
     return `$${amount}`
@@ -356,10 +665,22 @@ export const useReportes = () => {
 
   return {
     formReport,
+    estado,
     handleInputChange,
     loadOptionsBancos,
     loadOptionsProveedores,
+    loadOptionsGuardias,
+    loadOptionsGuardiasTodos,
+    loadOptionsClientes,
+    loadOptionsProveedoresUnico,
+    loadOptionsBancosUnico,
+    loadOptionsVehiculos,
     generateReport,
-    generateReportCartera
+    generateReportCartera,
+    generateReportRH,
+    generateEstadoCuentaGuardia,
+    generateEstadoCuentaCliente,
+    generateEstadoCuentaProveedor,
+    generateEstadoCuentaBanco
   }
 }

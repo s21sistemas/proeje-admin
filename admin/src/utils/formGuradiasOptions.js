@@ -44,6 +44,18 @@ export const formOptions = {
       type: 'text',
       label: 'Contacto de emergencia *',
       name: 'contacto_emergencia'
+    },
+    {
+      required: true,
+      type: 'async',
+      label: 'Sucursal a la que pertenece *',
+      name: 'sucursal_empresa_id'
+    },
+    {
+      required: true,
+      type: 'text',
+      label: 'Número de empleado *',
+      name: 'numero_empleado'
     }
   ],
 
@@ -127,6 +139,58 @@ export const formOptions = {
       type: 'date',
       label: 'Fecha del último antidoping',
       name: 'fecha_antidoping'
+    }
+  ],
+
+  prestacionesFields: [
+    {
+      required: true,
+      step: '0.01',
+      type: 'number',
+      label: 'Sueldo base x semana *',
+      name: 'sueldo_base'
+    },
+    {
+      required: true,
+      step: '0.01',
+      type: 'number',
+      label: 'Días laborales x semana *',
+      name: 'dias_laborales'
+    },
+    {
+      required: true,
+      step: '0.01',
+      type: 'number',
+      label: 'Aguinaldo *',
+      name: 'aguinaldo'
+    },
+    {
+      required: true,
+      step: '0.01',
+      type: 'number',
+      label: 'IMSS *',
+      name: 'imss'
+    },
+    {
+      required: true,
+      step: '0.01',
+      type: 'number',
+      label: 'INFONAVIT *',
+      name: 'infonavit'
+    },
+    {
+      required: true,
+      step: '0.01',
+      type: 'number',
+      label: 'FONACOT *',
+      name: 'fonacot'
+    },
+    {
+      required: true,
+      step: '0.01',
+      type: 'number',
+      label: 'Retención de impuestos *',
+      name: 'retencion_isr'
     }
   ]
 }

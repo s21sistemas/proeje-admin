@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Http\Middleware;
+
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class PermisoDinamicoMiddleware
+{
+    public function handle(Request $request, Closure $next): Response
+    {
+        $user = auth()->user();
+        $rol = $user->rol;
+
+        if (!$rol) {
+            return response()->json(['error' => 'Sin rol asignado'], 403);
+        }
+
+        // Mapa de rutas auxiliares a módulos reales
+        $mapAliasModulo = [
+            'count-adminpage'                => 'guardias',
+            'guardias-asignado'                => 'guardias',
+            'guardias-sucursal'                => 'guardias',
+            'supervisores-sucursal'            => 'guardias',
+            'jefes-sucursal'                   => 'guardias',
+            'prestamos-pendientes'             => 'guardias',
+            'generar-estadocuenta-guardia'     => 'guardias',
+            'generar-estadocuenta-banco'       => 'guardias',
+            'generar-estadocuenta-cliente'     => 'guardias',
+            'generar-estadocuenta-proveedor'   => 'guardias',
+            'sucursales-cliente'               => 'guardias',
+            'articulos-asignar'                => 'articulos',
+            'vehiculos-disponibles'            => 'vehiculos',
+            'ventas-orden-servicio'            => 'ventas',
+            'almacen-disponibles'              => 'almacen',
+            'equipamiento-completo'            => 'guardias',
+            'equipo-disponible/{articulo_id}'  => 'clientes',
+
+            'check-blacklist'                  => 'clientes',
+            'generador-reportes'               => 'clientes',
+            'reporte-rh'                       => 'clientes',
+        ];
+
+        $path = $request->path(); // ejemplo: api/sucursales-empresa/5
+        $uri = explode('/', $path);
+
+        // Ignora el prefijo "api" si existe
+        $moduloBase = $uri[0] === 'api' ? $uri[1] ?? null : $uri[0];
+
+        // Aplica alias si existe
+        $modulo = $mapAliasModulo[$moduloBase] ?? $moduloBase;
+
+        $metodo = $request->method();
+        $accion = match ($metodo) {
+            'GET'    => 'consultar',
+            'POST'   => 'crear',
+            'PUT', 'PATCH' => 'actualizar',
+            'DELETE' => 'eliminar',
+            default  => 'consultar'
+        };
+
+        $permiso = $rol->permisos()->whereHas('modulo', function ($q) use ($modulo) {
+            $q->where('nombre', $modulo);
+        })->first();
+
+        if (!$permiso || !$permiso->$accion) {
+            return response()->json(['message' => 'No tienes permiso para acceder a este módulo'], 403);
+        }
+
+        return $next($request);
+    }
+}

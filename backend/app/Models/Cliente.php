@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasLogs;
 
 class Cliente extends Model
 {
-    use HasFactory;
+    use HasFactory, HasLogs;
 
     protected $table = 'clientes';
 
@@ -25,10 +26,6 @@ class Cliente extends Model
 
     public function sucursales() {
         return $this->hasMany(Sucursal::class);
-    }
-
-    public function estadoCuenta() {
-        return $this->hasMany(EstadoCuentaCliente::class);
     }
 
     public function getSituacionFiscalUrlAttribute()

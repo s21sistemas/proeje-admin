@@ -1,23 +1,5 @@
 export const formOptions = {
   generalFields: [
-    // {
-    //   required: true,
-    //   type: 'async',
-    //   label: 'Selecciona al proveedor *',
-    //   name: 'proveedor_id'
-    // },
-    // {
-    //   required: true,
-    //   type: 'async',
-    //   label: 'Selecciona el banco *',
-    //   name: 'banco_id'
-    // },
-    // {
-    //   required: true,
-    //   type: 'async',
-    //   label: 'Selecciona el articulo *',
-    //   name: 'articulo_id'
-    // },
     {
       required: true,
       type: 'async',
@@ -29,6 +11,12 @@ export const formOptions = {
       type: 'textarea',
       label: 'Domicilio del servicio *',
       name: 'domicilio_servicio'
+    },
+    {
+      required: true,
+      type: 'text',
+      label: 'Código de la orden de servicio *',
+      name: 'codigo_orden_servicio'
     },
     {
       required: true,
@@ -45,13 +33,13 @@ export const formOptions = {
     {
       required: true,
       type: 'text',
-      label: 'Nombre de la persona responsable en sitio *',
+      label: 'Nombre del contacto *',
       name: 'nombre_responsable_sitio'
     },
     {
       required: true,
       type: 'number',
-      label: 'Teléfono de la persona responsable en sitio *',
+      label: 'Teléfono del contacto *',
       name: 'telefono_responsable_sitio'
     },
     {

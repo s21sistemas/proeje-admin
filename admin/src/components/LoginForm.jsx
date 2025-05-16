@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
-import { useAuth } from '../hooks/useAuth'
+import { toast } from 'sonner'
+import { useAuth } from '../context/AuthContext'
 
 export const LoginForm = () => {
   const { login } = useAuth()
@@ -11,10 +12,12 @@ export const LoginForm = () => {
     const formData = new FormData(e.target)
     const data = Object.fromEntries(formData)
 
-    localStorage.setItem('email', data.email)
-    localStorage.setItem('mensaje', data.password)
-
-    await login(data.email, data.password)
+    try {
+      await login(data.email, data.password)
+    } catch (error) {
+      console.log(error)
+      toast.error('Credenciales inválidas')
+    }
   }
 
   return (
@@ -51,8 +54,8 @@ export const LoginForm = () => {
             name='password'
             type={showPassword ? 'text' : 'password'}
             placeholder='••••••••'
-            className='shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border disabled:bg-gray-100'
             required
+            className='shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border disabled:bg-gray-100'
           />
           <button
             type='button'

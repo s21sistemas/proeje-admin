@@ -46,17 +46,19 @@ return new class extends Migration
             $table->text('servicios');
             $table->integer('guardias_dia');
             $table->decimal('precio_guardias_dia', 10, 2);
+            $table->decimal('precio_guardias_dia_total', 10, 2);
             $table->integer('guardias_noche');
             $table->decimal('precio_guardias_noche', 10, 2);
+            $table->decimal('precio_guardias_noche_total', 10, 2);
             $table->integer('cantidad_guardias');
-            $table->enum('jefe_grupo', ['SI', 'NO']);
-            $table->integer('precio_jefe_grupo')->nullable();
+            $table->enum('jefe_turno', ['SI', 'NO']);
+            $table->integer('precio_jefe_turno')->nullable();
             $table->enum('supervisor', ['SI', 'NO']);
             $table->integer('precio_supervisor')->nullable();
             $table->text('notas')->nullable();
             $table->decimal('costo_extra', 10, 2)->nullable();
             $table->decimal('subtotal', 10, 2);
-            $table->boolean('impuesto')->default(false);
+            $table->decimal('impuesto', 10, 2)->default(0);
             $table->decimal('total', 10, 2);
             $table->enum('aceptada', ['SI', 'NO', 'PENDIENTE'])->default('PENDIENTE');
             $table->foreignId('sucursal_id')->nullable()->constrained('sucursales')->onDelete('cascade');
@@ -65,6 +67,8 @@ return new class extends Migration
             $table->enum('soporte_documental', ['SI', 'NO'])->default('NO');
             $table->mediumText('observaciones_soporte_documental')->nullable();
             $table->mediumText('requisitos_pago_cliente')->nullable();
+
+            $table->foreignId('sucursal_empresa_id')->constrained('sucursales_empresa')->onDelete('cascade');
 
             $table->timestamps();
         });

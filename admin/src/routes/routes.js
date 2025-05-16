@@ -1,30 +1,50 @@
 import {
   Archive,
   BarChart3,
-  BookOpenText,
   Landmark,
   ShieldUser,
-  ShoppingBasket,
   UserRoundPen,
   UsersRound,
   ArrowRightLeft,
   FolderClock,
-  DollarSign,
   Handshake,
   Settings,
   FileText,
-  Wallet
+  Wallet,
+  ClipboardList,
+  Building,
+  Car,
+  ShieldCheck
 } from 'lucide-react'
 
 export const routes = [
   { path: '/', label: 'Dashboard', Icon: BarChart3 },
+  { path: '/sucursales-empresa', label: 'Sucursales', Icon: Building },
   {
     label: 'Personal',
     Icon: ShieldUser,
     children: [
       { label: 'Guardias', path: '/guardias' },
-      { label: 'Recursos Humanos', path: '/recursos-humanos' },
-      { label: 'Equipo asignado', path: '/equipo' }
+      { label: 'Equipo asignado', path: '/equipo' },
+      { label: 'Lista negra', path: '/blacklist' }
+    ]
+  },
+  {
+    label: 'Recursos Humanos',
+    Icon: ClipboardList,
+    children: [
+      { label: 'Incapacidades', path: '/incapacidades' },
+      { label: 'Tiempo extra', path: '/tiempo-extra' },
+      { label: 'Faltas', path: '/faltas' },
+      { label: 'Descuentos', path: '/descuentos' },
+      { label: 'Vacaciones', path: '/vacaciones' },
+      { label: 'Préstamos', path: '/prestamos' },
+      { label: 'Abonos', path: '/abonos-prestamo' },
+      { label: 'Pagos a guardias', path: '/pagos-empleados' },
+      { label: 'Estado de cuenta', path: '/estadocuenta-guardias' },
+      { label: 'Reportes', path: '/reportes-guardias' },
+      { label: 'Tipo de descuento', path: '/modulo-descuentos' },
+      { label: 'Tipo de préstamo', path: '/modulo-prestamos' }
     ]
   },
   {
@@ -32,17 +52,46 @@ export const routes = [
     Icon: UserRoundPen,
     children: [
       { path: '/clientes', label: 'Clientes' },
-      { path: '/sucursales', label: 'Sucursales' }
+      { path: '/sucursales', label: 'Sucursales' },
+      { label: 'Estado de cuenta', path: '/estadocuenta-clientes' }
     ]
   },
-  { path: '/proveedores', label: 'Proveedores', Icon: UsersRound },
+  {
+    label: 'Proveedores',
+    Icon: UsersRound,
+    children: [
+      { path: '/proveedores', label: 'Proveedores' },
+      { label: 'Estado de cuenta', path: '/estadocuenta-proveedores' }
+    ]
+  },
+  {
+    label: 'Reporte servicios',
+    Icon: ShieldCheck,
+    children: [
+      { path: '/guardias-check', label: 'Guardias check' },
+      { path: '/bitacoras-guardia', label: 'Bitácoras' },
+      { path: '/reporte-incidentes', label: 'Incidentes' },
+      { path: '/reporte-guardias', label: 'Reporte guardias' },
+      { path: '/reporte-supervisores', label: 'Reporte supervisores' },
+      { path: '/recorridos-guardia', label: 'Recorridos' }
+    ]
+  },
   {
     label: 'Servicios',
     Icon: Handshake,
     children: [
       { path: '/cotizaciones', label: 'Cotizaciones' },
       { path: '/ventas', label: 'Ventas' },
-      { path: '/orden-servicio', label: 'Orden de servicio' }
+      { path: '/orden-servicio', label: 'Orden de servicio' },
+      { path: '/generar-qr', label: 'Generar QRs' }
+    ]
+  },
+  {
+    label: 'Vehículos',
+    Icon: Car,
+    children: [
+      { path: '/vehiculos', label: 'Vehículos' },
+      { path: '/boletas-gasolina', label: 'Boletas de gasolina' }
     ]
   },
   {
@@ -50,7 +99,6 @@ export const routes = [
     Icon: Archive,
     children: [
       { path: '/articulos', label: 'Artículos' },
-      { path: '/vehiculos', label: 'Vehículos' },
       { path: '/almacen', label: 'Almacen' },
       { path: '/almacen-entradas', label: 'Entradas' },
       { path: '/almacen-salidas', label: 'Salidas' }
@@ -61,7 +109,8 @@ export const routes = [
     Icon: Landmark,
     children: [
       { path: '/bancos', label: 'Bancos' },
-      { path: '/movimientos', label: 'Movimientos' }
+      { path: '/movimientos-bancarios', label: 'Movimientos' },
+      { path: '/estadocuenta-bancos', label: 'Estado de cuenta' }
     ]
   },
   {
@@ -73,7 +122,6 @@ export const routes = [
       { path: '/gastos', label: 'Gastos' }
     ]
   },
-
   {
     label: 'Configuración',
     Icon: Settings,
@@ -84,9 +132,9 @@ export const routes = [
       { path: '/logs', label: 'Movimientos' }
     ]
   },
-  { path: '/reportes', label: 'Reportes', Icon: FileText },
+  { path: '/generador-reportes', label: 'Reportes', Icon: FileText },
   {
-    path: '/reporte-cartera-vencida',
+    path: '/cartera-vencida',
     label: 'Cartera vencida',
     Icon: Wallet
   },

@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasLogs;
 
 class Rol extends Model
 {
-    use HasFactory;
+    use HasFactory, HasLogs;
 
     protected $table = 'roles';
 
@@ -17,7 +18,8 @@ class Rol extends Model
         return $this->hasMany(Usuario::class);
     }
 
-    public function permisos() {
+    public function permisos()
+    {
         return $this->hasMany(Permiso::class);
     }
 }

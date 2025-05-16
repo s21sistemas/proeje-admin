@@ -9,14 +9,15 @@ import { Upload } from 'lucide-react'
 import { useGuardias } from '../../hooks/useGuardias'
 
 export const FormGuardias = () => {
-  const { opcionesEstados, municipios } = useGuardias()
+  const { opcionesEstados, municipios, handleCheckBlackList } = useGuardias()
   const {
     view,
-    edit,
+    add,
     document,
     formData,
     handleInputChange,
-    handleFileChange
+    handleFileChange,
+    loadOptionsSucursalesEmpresa
   } = useModal()
   const fileInputRef = useRef(null)
 
@@ -135,8 +136,8 @@ export const FormGuardias = () => {
           type='text'
           onChange={handleInputChange}
           required
-          disabled={true}
-          value='México'
+          disabled={view}
+          value={formData.pais || ''}
         />
 
         <div className='sm:col-span-6 md:col-span-2'>
@@ -183,17 +184,34 @@ export const FormGuardias = () => {
         <div className='sm:col-span-6 md:col-span-2'>
           <AlertaCard text='Otros datos' />
         </div>
-        {formOptions.otrosFields.map(
-          ({ type, label, name, accept, required }) => (
+        {formOptions.otrosFields.map(({ type, label, name, required }) => (
+          <InputField
+            key={name}
+            type={type}
+            label={label}
+            required={required}
+            name={name}
+            value={formData[name] || ''}
+            onChange={handleInputChange}
+            loadOptions={loadOptionsSucursalesEmpresa}
+            disabled={view}
+          />
+        ))}
+
+        <div className='sm:col-span-6 md:col-span-2'>
+          <AlertaCard text='Prestaciones y sueldo' />
+        </div>
+        {formOptions.prestacionesFields.map(
+          ({ type, label, name, required, step }) => (
             <InputField
               key={name}
               type={type}
-              accept={accept}
               label={label}
               required={required}
               name={name}
+              step={step}
               value={formData[name] || ''}
-              onChange={type === 'file' ? handleFileChange : handleInputChange}
+              onChange={handleInputChange}
               disabled={view}
             />
           )
@@ -213,17 +231,17 @@ export const FormGuardias = () => {
             { label: 'Selecciona una opción', value: '' },
             { label: 'Guardia', value: 'Guardia' },
             { label: 'Supervisor', value: 'Supervisor' },
-            { label: 'Jefe de grupo', value: 'Jefe de grupo' }
+            { label: 'Jefe de turno', value: 'Jefe de turno' }
           ]}
           onChange={handleInputChange}
           disabled={view}
           classInput='md:col-span-2'
         />
 
-        {edit && (
+        {document && (
           <InputField
             type='select'
-            label='Nivel del guardia *'
+            label='Estatus del guardia *'
             required={true}
             name='estatus'
             value={formData.estatus || ''}
@@ -240,6 +258,19 @@ export const FormGuardias = () => {
           />
         )}
       </div>
+      <hr className='text-gray-300' />
+      {add && (
+        <div className='my-5'>
+          <AlertaCard text='Revisa si el guardia está en la lista negra antes de guardar los datos.' />
+          <button
+            type='button'
+            onClick={() => handleCheckBlackList(formData)}
+            className='w-full mt-5 rounded-md border border-transparent shadow-sm px-4 py-2 bg-orange-500 text-base font-medium text-white hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 sm:text-sm cursor-pointer transition-all'
+          >
+            Revisar datos
+          </button>
+        </div>
+      )}
       <hr className='text-gray-300' />
       {view ? <CancelButtonModal /> : <ButtonsModal />}
     </>

@@ -46,11 +46,13 @@ export const TbodyTable = ({ loading, columns, currentData, handleClass }) => {
                       {[
                         'Pendiente',
                         'Pagada',
+                        'Pagado',
                         'Cancelada',
                         'SI',
                         'NO',
                         'Disponible',
-                        'PENDIENTE'
+                        'PENDIENTE',
+                        'Vencida'
                       ].includes(item[col.key]) ? (
                         <p>
                           <span

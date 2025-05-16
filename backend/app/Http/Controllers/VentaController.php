@@ -13,7 +13,7 @@ class VentaController extends Controller
     //  * Mostrar todos los registros.
     public function index()
     {
-        $registros = Venta::with('cotizacion.sucursal')->where('eliminado', false)->get();
+        $registros = Venta::with(['cotizacion.sucursal', 'cotizacion.sucursal_empresa'])->where('eliminado', false)->get();
         return response()->json($registros);
     }
 
@@ -59,7 +59,7 @@ class VentaController extends Controller
     //  * Mostrar un solo registro por su ID.
     public function show($id)
     {
-        $registro = Venta::find($id);
+        $registro = Venta::with(['cotizacion.sucursal', 'cotizacion.sucursal_empresa'])->find($id);
 
         if (!$registro) {
             return response()->json(['error' => 'Registro no encontrado'], 404);

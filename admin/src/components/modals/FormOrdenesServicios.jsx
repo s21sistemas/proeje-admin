@@ -12,10 +12,11 @@ export const FormOrdenesServicios = () => {
     formData,
     handleInputChange,
     loadOptionsVentas,
-    loadOptionsGuardias,
-    loadOptionsSupervisores,
-    loadOptionsJefesGrupo,
-    handleCheckboxChange
+    handleCheckboxChange,
+    loadOptionsGuardiasBySucursal,
+    selectSupervisorBySucursal,
+    selectJefeBySucursal,
+    reloadGuardias
   } = useModal()
 
   return (
@@ -83,24 +84,51 @@ export const FormOrdenesServicios = () => {
                 ? true
                 : name === 'domicilio_servicio'
                 ? !formData.cambiar_direccion
+                : edit && name === 'codigo_orden_servicio'
+                ? true
                 : view
             }
             classInput='md:col-span-2'
           />
         ))}
 
+        {formData.jefe_turno === 'SI' && (
+          <>
+            <div className='sm:col-span-6 md:col-span-2'>
+              <AlertaCard text='Asignación de jefe de turno' />
+            </div>
+
+            <InputField
+              type='select'
+              label='Jefe de turno a asignar *'
+              name='jefe_turno_id'
+              required={true}
+              value={formData.jefe_turno_id || ''}
+              onChange={handleInputChange}
+              opcSelect={selectJefeBySucursal}
+              disabled={
+                ['Finalizada', 'Cancelada'].includes(formData.estatus)
+                  ? true
+                  : view
+              }
+              classInput='md:col-span-2'
+            />
+          </>
+        )}
+
         <div className='sm:col-span-6 md:col-span-2'>
           <AlertaCard text='Asignación de guardias' />
         </div>
 
         <InputField
+          key={reloadGuardias}
           type='async-multi'
           label='Guardias a asignar *'
           name='guardias_id'
           required={true}
           value={formData.guardias_id || ''}
-          loadOptions={loadOptionsGuardias}
           onChange={handleInputChange}
+          loadOptions={loadOptionsGuardiasBySucursal}
           disabled={
             ['Finalizada', 'Cancelada'].includes(formData.estatus) ? true : view
           }
@@ -114,37 +142,13 @@ export const FormOrdenesServicios = () => {
             </div>
 
             <InputField
-              type='async'
+              type='select'
               label='Supervisor a asignar *'
               name='supervisor_id'
               required={true}
               value={formData.supervisor_id || ''}
-              loadOptions={loadOptionsSupervisores}
               onChange={handleInputChange}
-              disabled={
-                ['Finalizada', 'Cancelada'].includes(formData.estatus)
-                  ? true
-                  : view
-              }
-              classInput='md:col-span-2'
-            />
-          </>
-        )}
-
-        {formData.jefe_grupo === 'SI' && (
-          <>
-            <div className='sm:col-span-6 md:col-span-2'>
-              <AlertaCard text='Asignación de jefe de grupos' />
-            </div>
-
-            <InputField
-              type='async'
-              label='Jefe de grupo a asignar *'
-              name='jefe_grupo_id'
-              required={true}
-              value={formData.jefe_grupo_id || ''}
-              loadOptions={loadOptionsJefesGrupo}
-              onChange={handleInputChange}
+              opcSelect={selectSupervisorBySucursal}
               disabled={
                 ['Finalizada', 'Cancelada'].includes(formData.estatus)
                   ? true

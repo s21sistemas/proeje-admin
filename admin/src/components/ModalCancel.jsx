@@ -1,6 +1,7 @@
-import { Ban, Trash2 } from 'lucide-react'
+import { Ban } from 'lucide-react'
 import { useModal } from '../hooks/useModal'
 import { InputField } from './InputField'
+
 export const ModalCancel = ({ handleCancel }) => {
   const { closeModal, formData, handleInputChange } = useModal()
 

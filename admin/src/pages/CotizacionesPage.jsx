@@ -8,7 +8,7 @@ import { FormCotizaciones } from '../components/modals/FormCotizaciones'
 const columns = [
   { key: 'nombre_empresa', name: 'Nombre empresa' },
   { key: 'cantidad_guardias', name: 'Guardias totales' },
-  { key: 'jefe_grupo', name: 'Jefe de grupo' },
+  { key: 'jefe_turno', name: 'Jefe de turno' },
   { key: 'supervisor', name: 'Supervisor' },
   { key: 'total_servicio', name: 'Total servicio' },
   { key: 'fecha_servicio_format', name: 'Fecha servicio' },

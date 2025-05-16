@@ -17,7 +17,8 @@ export const FormCotizaciones = () => {
     opcionesEstados,
     municipios,
     loadOptionsClientes,
-    selectOptions
+    selectOptions,
+    loadOptionsSucursalesEmpresa
   } = useModal()
 
   return (
@@ -61,6 +62,21 @@ export const FormCotizaciones = () => {
               )}
           </>
         )}
+
+        <div className='sm:col-span-6 md:col-span-2'>
+          <AlertaCard text='Sucursal de la empresa donde se hará la cotización' />
+        </div>
+        <InputField
+          type='async'
+          label='Selecciona la sucursal *'
+          name='sucursal_empresa_id'
+          required={true}
+          value={formData.sucursal_empresa_id || ''}
+          onChange={handleInputChange}
+          disabled={formData.aceptada === 'SI' ? true : view}
+          loadOptions={loadOptionsSucursalesEmpresa}
+          classInput='md:col-span-2'
+        />
 
         <SwitchInput
           card='Cotización para...'
@@ -150,8 +166,11 @@ export const FormCotizaciones = () => {
               opcSelect={opcSelect}
               onChange={handleInputChange}
               disabled={
-                ['cantidad_guardias'].includes(name) ||
-                formData.aceptada === 'SI'
+                [
+                  'cantidad_guardias',
+                  'precio_guardias_dia_total',
+                  'precio_guardias_noche_total'
+                ].includes(name) || formData.aceptada === 'SI'
                   ? true
                   : view
               }
@@ -160,14 +179,14 @@ export const FormCotizaciones = () => {
           )
         )}
 
-        {formData.jefe_grupo === 'SI' && (
+        {formData.jefe_turno === 'SI' && (
           <InputField
             type='number'
-            label='Costo por jefe de grupo *'
-            name='precio_jefe_grupo'
+            label='Costo por jefe de turno *'
+            name='precio_jefe_turno'
             required={true}
             step='0.01'
-            value={formData.precio_jefe_grupo || ''}
+            value={formData.precio_jefe_turno || ''}
             onChange={handleInputChange}
             disabled={formData.aceptada === 'SI' ? true : view}
             classInput='md:col-span-1'
@@ -232,7 +251,21 @@ export const FormCotizaciones = () => {
           />
         )}
 
-        <SwitchInput value='impuesto' card='Impuesto' text='¿Pago + IVA?' />
+        <div className='sm:col-span-6 md:col-span-2'>
+          <AlertaCard text='Total' />
+        </div>
+
+        <InputField
+          type='number'
+          step='0.01'
+          label='Porcentaje de impuestos (si no aplica introducir 0) *'
+          name='impuesto'
+          required={true}
+          value={formData.impuesto || ''}
+          onChange={handleInputChange}
+          disabled={formData.aceptada === 'SI' ? true : view}
+          classInput='md:col-span-2'
+        />
 
         {formOptions.montosFields.map(
           ({ type, label, name, required, step }) => (

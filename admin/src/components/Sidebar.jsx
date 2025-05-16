@@ -3,10 +3,16 @@ import logo from '../assets/imgs/logo.png'
 import { Link, useLocation } from 'react-router'
 import { useState } from 'react'
 import { routes } from '../routes/routes'
+import { useAuth } from '../context/AuthContext'
 
 export const Sidebar = ({ toggleSidebar, sidebarOpen }) => {
   const location = useLocation()
   const [openMenus, setOpenMenus] = useState({})
+  const { user } = useAuth()
+
+  const permisosModulos = new Set(
+    user?.rol?.permisos.map((permiso) => permiso.modulo.nombre)
+  )
 
   const toggleMenu = (label) => {
     setOpenMenus((prev) => ({ ...prev, [label]: !prev[label] }))
@@ -44,56 +50,70 @@ export const Sidebar = ({ toggleSidebar, sidebarOpen }) => {
 
       <nav className='mt-5 px-2'>
         <div className='space-y-1'>
-          {routes.map((route) => (
-            <div key={route.label}>
-              {route.path ? (
-                <Link
-                  to={route.path}
-                  onClick={handleLinkClick}
-                  className={`flex items-center px-4 py-2 text-sm font-medium rounded-md text-white text-shadow transition-all ${isActive(
-                    route.path
-                  )}`}
-                >
-                  {route.Icon && <route.Icon className='mr-3 h-5 w-5' />}
-                  {route.label}
-                </Link>
-              ) : (
-                <div>
-                  <button
-                    onClick={() => toggleMenu(route.label)}
-                    className='cursor-pointer flex items-center w-full px-4 py-2 text-sm font-medium rounded-md text-white hover:bg-primary-dark transition-all'
+          {routes
+            .filter((route) => {
+              if (route.path === '/') return true
+              if (route.children) {
+                return route.children.some((child) =>
+                  permisosModulos.has(child.path.replace('/', ''))
+                )
+              }
+              return permisosModulos.has(route.path?.replace('/', ''))
+            })
+            .map((route) => (
+              <div key={route.label}>
+                {route.path ? (
+                  <Link
+                    to={route.path}
+                    onClick={handleLinkClick}
+                    className={`flex items-center px-4 py-2 text-sm font-medium rounded-md text-white text-shadow transition-all ${isActive(
+                      route.path
+                    )}`}
                   >
-                    {route.Icon && <route.Icon className='mr-3 h-5 w-5' />}
+                    {route.Icon && <route.Icon className='mr-2 h-5 w-5' />}
                     {route.label}
-                    {openMenus[route.label] ? (
-                      <ChevronUp className='ml-auto h-4 w-4' />
-                    ) : (
-                      <ChevronDown className='ml-auto h-4 w-4' />
-                    )}
-                  </button>
-                  <div
-                    className={`ml-6 mt-1 space-y-1 transition-all overflow-hidden ${
-                      openMenus[route.label] ? 'max-h-60' : 'max-h-0'
-                    }`}
-                  >
-                    {route.children.map((child) => (
-                      <Link
-                        key={child.path}
-                        to={child.path}
-                        onClick={handleLinkClick}
-                        className={`flex items-center px-4 py-2 text-sm font-medium rounded-md text-white text-shadow transition-all ${isActive(
-                          child.path
-                        )}`}
-                      >
-                        <Dot className='h-5 w-5' />
-                        {child.label}
-                      </Link>
-                    ))}
+                  </Link>
+                ) : (
+                  <div>
+                    <button
+                      onClick={() => toggleMenu(route.label)}
+                      className='cursor-pointer flex items-center w-full px-4 py-2 text-sm font-medium rounded-md text-white hover:bg-primary-dark transition-all'
+                    >
+                      {route.Icon && <route.Icon className='mr-2 h-5 w-5' />}
+                      {route.label}
+                      {openMenus[route.label] ? (
+                        <ChevronUp className='ml-auto h-4 w-4' />
+                      ) : (
+                        <ChevronDown className='ml-auto h-4 w-4' />
+                      )}
+                    </button>
+                    <div
+                      className={`ml-6 mt-1 space-y-1 transition-all overflow-hidden ${
+                        openMenus[route.label] ? 'max-h-120' : 'max-h-0'
+                      }`}
+                    >
+                      {route.children
+                        .filter((child) =>
+                          permisosModulos.has(child.path.replace('/', ''))
+                        )
+                        .map((child) => (
+                          <Link
+                            key={child.path}
+                            to={child.path}
+                            onClick={handleLinkClick}
+                            className={`flex items-center px-4 py-2 text-sm font-medium rounded-md text-white text-shadow transition-all ${isActive(
+                              child.path
+                            )}`}
+                          >
+                            <Dot className='h-5 w-5' />
+                            {child.label}
+                          </Link>
+                        ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          ))}
+                )}
+              </div>
+            ))}
         </div>
       </nav>
     </div>

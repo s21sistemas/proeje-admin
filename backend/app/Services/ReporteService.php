@@ -7,18 +7,20 @@ use App\Models\Compra;
 use App\Models\MovimientoBancario;
 use App\Models\Gasto;
 use App\Models\Venta;
+use App\Models\BoletaGasolina;
 
 class ReporteService
 {
     public static function obtenerRegistros($modulo, $filtros)
     {
         $query = match ($modulo) {
-            'movimientos' => MovimientoBancario::query(),
-            'orden-compra' => OrdenCompra::query(),
-            'compras'      => OrdenCompra::query(),
-            'gastos'       => Gasto::query(),
-            'ventas'       => Venta::query(),
-            default        => null,
+            'movimientos'      => MovimientoBancario::query(),
+            'orden-compra'     => OrdenCompra::query(),
+            'compras'          => OrdenCompra::query(),
+            'gastos'           => Gasto::query(),
+            'ventas'           => Venta::query(),
+            'boletas-gasolina' => BoletaGasolina::query(),
+            default            => null,
         };
 
         if (!$query) {
@@ -35,7 +37,7 @@ class ReporteService
             'compras'      => self::filtrarCompra($query, $filtros),
             'gastos'       => self::filtrarGasto($query, $filtros),
             'ventas'       => self::filtrarVenta($query, $filtros),
-        };
+            'boletas-gasolina' => self::filtrarBoletaGasolina($query, $filtros),};
 
         return $query->get();
     }
@@ -108,6 +110,15 @@ class ReporteService
         }
         if ($filtros['tipo_pago'] !== 'todos') {
             $query->where('tipo_pago', $filtros['tipo_pago']);
+        }
+    }
+
+    private static function filtrarBoletaGasolina($query, $filtros)
+    {
+        $query->with('vehiculo');
+
+        if ($filtros['vehiculo_id'] !== 'todos') {
+            $query->where('vehiculo_id', $filtros['vehiculo_id']);
         }
     }
 }

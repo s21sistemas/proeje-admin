@@ -4,11 +4,12 @@ import { ModalDelete } from '../components/ModalDelete'
 import { useModal } from '../hooks/useModal'
 import { useGuardias } from '../hooks/useGuardias'
 import { FormGuardias } from '../components/modals/FormGuardias'
+import { ModalBlackList } from '../components/ModalBlackList'
 
 const columns = [
   { key: 'nombre_completo', name: 'Nombre' },
-  { key: 'direccion_completa', name: 'Dirección' },
-  { key: 'telefono', name: 'Teléfono' },
+  { key: 'nombre_sucursal', name: 'Sucursal dado de alta' },
+  { key: 'numero_empleado', name: 'Número de empleado' },
   { key: 'rango', name: 'Rango' },
   { key: 'estatus', name: 'Estatus' }
 ]
@@ -16,8 +17,15 @@ const columns = [
 export default function GuardiasPage() {
   const { modalType, currentItem } = useModal()
 
-  const { data, isLoading, isError, error, handleSubmit, handleDelete } =
-    useGuardias()
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    handleSubmit,
+    handleDelete,
+    handleBlackList
+  } = useGuardias()
 
   if (isError) return <div>{error.message}</div>
 
@@ -38,6 +46,10 @@ export default function GuardiasPage() {
 
       {modalType === 'delete' && currentItem && (
         <ModalDelete handleDelete={handleDelete} />
+      )}
+
+      {modalType === 'blacklist' && currentItem && (
+        <ModalBlackList handleBlackList={handleBlackList} />
       )}
     </div>
   )

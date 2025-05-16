@@ -22,10 +22,10 @@ return new class extends Migration
             $table->unsignedInteger('cantidad_articulo');
             $table->decimal('precio_articulo', 10, 2);
             $table->enum('metodo_pago', ['Transferencia bancaria', 'Tarjeta de crédito/débito', 'Efectivo', 'Cheques']);
-            $table->boolean('impuesto')->default(false);
+            $table->decimal('impuesto', 10, 2)->default(0);
             $table->decimal('subtotal', 10, 2);
             $table->decimal('total', 10, 2);
-            $table->enum('estatus', ['Pagada', 'Pendiente', 'Cancelada'])->default('Pendiente');
+            $table->enum('estatus', ['Pagada', 'Pendiente', 'Cancelada', 'Vencida'])->default('Pendiente');
             $table->timestamps();
         });
     }

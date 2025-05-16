@@ -30,7 +30,7 @@ class OrdenCompraController extends Controller
             'cantidad_articulo' => 'required|integer',
             'precio_articulo' => 'required|numeric|min:1',
             'metodo_pago' => 'required|in:Transferencia bancaria,Tarjeta de crédito/débito,Efectivo,Cheques',
-            'impuesto' => 'nullable|boolean',
+            'impuesto' => 'required|numeric',
             'subtotal' => 'required|numeric|min:1',
             'total' => 'required|numeric|min:1',
         ]);
@@ -68,7 +68,7 @@ class OrdenCompraController extends Controller
             'cantidad_articulo' => 'sometimes|integer',
             'precio_articulo' => 'sometimes|numeric|min:1',
             'metodo_pago' => 'sometimes|in:Transferencia bancaria,Tarjeta de crédito/débito,Efectivo,Cheques',
-            'impuesto' => 'nullable|boolean',
+            'impuesto' => 'sometimes|numeric',
             'subtotal' => 'sometimes|numeric|min:1',
             'total' => 'sometimes|numeric|min:1',
             'estatus' => 'sometimes|in:Pagada,Pendiente,Cancelada',

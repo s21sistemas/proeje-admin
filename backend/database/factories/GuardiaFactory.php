@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Guardia;
+use App\Models\SucursalEmpresa;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class GuardiaFactory extends Factory
@@ -11,12 +12,17 @@ class GuardiaFactory extends Factory
 
     public function definition()
     {
+        $nombre = $this->faker->firstName;
+        $apellido_p = $this->faker->lastName;
+        $apellido_m = $this->faker->lastName;
+        $rango = $this->faker->randomElement(['Guardia', 'Supervisor', 'Jefe de turno']);
+
         return [
-            'nombre' => $this->faker->firstName,
-            'apellido_p' => $this->faker->lastName,
-            'apellido_m' => $this->faker->lastName,
+            'nombre' => $nombre,
+            'apellido_p' => $apellido_p,
+            'apellido_m' => $apellido_m,
             'correo' => $this->faker->unique()->safeEmail,
-            'codigo_acceso' => $this->faker->regexify('[A-Z0-9]{10}'),
+            'numero_empleado' => $this->faker->regexify('[A-Z0-9]{8}'),
             'calle' => $this->faker->streetName,
             'numero' => $this->faker->buildingNumber,
             'colonia' => $this->faker->word,
@@ -30,7 +36,7 @@ class GuardiaFactory extends Factory
             'edad' => $this->faker->numberBetween(20, 60),
             'telefono_emergencia' => $this->faker->numerify('###########'),
             'contacto_emergencia' => $this->faker->name,
-            'rango' => $this->faker->randomElement(['Guardia', 'Supervisor', 'Jefe de grupo']),
+            'rango' => $this->faker->randomElement(['Guardia', 'Supervisor', 'Jefe de turno']),
 
             'foto' => $this->faker->imageUrl(),
             'curp' => 'curp.pdf',
@@ -45,7 +51,16 @@ class GuardiaFactory extends Factory
             'otro_archivo' => 'otro_archivo.pdf',
 
             'antidoping' => 'antidoping.pdf',
-            'fecha_antidoping' => $this->faker->dateTimeBetween('-1 year', 'now')->format('Y-m-d')
+            'fecha_antidoping' => $this->faker->dateTimeBetween('-1 year', 'now')->format('Y-m-d'),
+
+            'sueldo_base' => $this->faker->randomFloat(2, 5000, 15000),
+            'dias_laborales' => $this->faker->numberBetween(5, 6),
+            'imss' => $this->faker->numberBetween(0, 5),
+            'infonavit' => $this->faker->randomFloat(2, 0, 3000),
+            'fonacot' => $this->faker->randomFloat(2, 0, 3000),
+            'retencion_isr' => $this->faker->randomFloat(2, 0, 1000),
+
+            'sucursal_empresa_id' => SucursalEmpresa::inRandomOrder()->first()->id
         ];
     }
 }

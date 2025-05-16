@@ -15,8 +15,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
+            SucursalEmpresaSeeder::class,
             GuardiasSeeder::class,
-            RecursosHumanosSeeder::class,
             ClientesSeeder::class,
             SucursalesSeeder::class,
             ArticulosSeeder::class,
@@ -25,12 +25,13 @@ class DatabaseSeeder extends Seeder
             MovimientosBancariosSeeder::class,
             VehiculosSeeder::class,
             // EquipamientoSeeder::class,
-            CotizacionesSeeder::class,
-            VentasSeeder::class,
+            // CotizacionesSeeder::class,
+            // VentasSeeder::class,
             GastosSeeder::class,
             OrdenesCompraSeeder::class,
             ComprasSeeder::class,
             AlmacenSeeder::class,
+            FullSistemaSeeder::class
         ]);
     }
 }

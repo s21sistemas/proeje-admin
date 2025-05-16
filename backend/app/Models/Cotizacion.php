@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasLogs;
 
 class Cotizacion extends Model
 {
-    use HasFactory;
+    use HasFactory, HasLogs;
 
     protected $table = 'cotizaciones';
 
@@ -34,11 +35,13 @@ class Cotizacion extends Model
         'servicios',
         'guardias_dia',
         'precio_guardias_dia',
+        'precio_guardias_dia_total',
         'guardias_noche',
         'precio_guardias_noche',
+        'precio_guardias_noche_total',
         'cantidad_guardias',
-        'jefe_grupo',
-        'precio_jefe_grupo',
+        'jefe_turno',
+        'precio_jefe_turno',
         'supervisor',
         'precio_supervisor',
         'notas',
@@ -55,10 +58,16 @@ class Cotizacion extends Model
         'razon_social',
         'uso_cfdi',
         'regimen_fiscal',
-        'situacion_fiscal'
+        'situacion_fiscal',
+        'sucursal_empresa_id'
     ];
 
-    protected $hidden = ['sucursal_id'];
+    protected $hidden = ['sucursal_id', 'sucursal_empresa_id'];
+
+    public function sucursal_empresa()
+    {
+        return $this->belongsTo(SucursalEmpresa::class, 'sucursal_empresa_id');
+    }
 
     public function sucursal()
     {

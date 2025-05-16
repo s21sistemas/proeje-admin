@@ -6,6 +6,7 @@ import { useModal } from '../hooks/useModal'
 import { useOrdenesServicio } from '../hooks/useOrdenesServicio'
 
 const columns = [
+  { key: 'codigo_orden_servicio', name: 'Código' },
   { key: 'nombre_empresa', name: 'Sucursal' },
   { key: 'domicilio_servicio', name: 'Domicilio' },
   { key: 'inicio_format', name: 'Fecha inicio' },

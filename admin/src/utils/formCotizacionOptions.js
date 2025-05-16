@@ -106,8 +106,15 @@ export const formOptions = {
       required: true,
       type: 'number',
       step: '0.01',
-      label: 'Precio total de guardias por día ($) *',
+      label: 'Precio unitario de guardia por día *',
       name: 'precio_guardias_dia'
+    },
+    {
+      required: true,
+      type: 'number',
+      step: '0.01',
+      label: 'Precio total de guardias por día *',
+      name: 'precio_guardias_dia_total'
     },
     {
       required: true,
@@ -119,8 +126,15 @@ export const formOptions = {
       required: true,
       type: 'number',
       step: '0.01',
-      label: 'Precio total de guardias por noche ($) *',
+      label: 'Precio unitario de guardia por noche *',
       name: 'precio_guardias_noche'
+    },
+    {
+      required: true,
+      type: 'number',
+      step: '0.01',
+      label: 'Precio total de guardias por noche *',
+      name: 'precio_guardias_noche_total'
     },
     {
       required: true,
@@ -131,8 +145,8 @@ export const formOptions = {
     {
       required: true,
       type: 'select',
-      label: '¿Ocupa jefe de grupo? *',
-      name: 'jefe_grupo',
+      label: '¿Ocupa jefe de turno? *',
+      name: 'jefe_turno',
       opcSelect: [
         { value: '', label: 'Selecciona una opción' },
         { value: 'SI', label: 'Sí' },

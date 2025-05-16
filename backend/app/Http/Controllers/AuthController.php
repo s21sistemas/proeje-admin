@@ -9,37 +9,35 @@ use App\Models\Usuario;
 
 class AuthController extends Controller
 {
-    // * Método para logearse
     public function login(Request $request)
     {
         $request->validate([
-            'correo' => 'required|email',
-            'contrasena' => 'required|string'
+            'email' => 'required|email|exists:usuarios,email',
+            'password' => 'required|string',
         ]);
 
-        $usuario = Usuario::with('rol')->where('correo', $request->correo)->first();
+        $usuario = Usuario::where('email', $request->email)->first();
 
-        if (!$usuario || !Hash::check($request->contrasena, $usuario->contrasena)) {
-            return response()->json(['error' => 'Credenciales incorrectas'], 401);
+        if (!$usuario || !Hash::check($request->password, $usuario->password)) {
+            return response()->json(['message' => 'Credenciales inválidas'], 401);
         }
+
+        // Eliminar tokens anteriores si quieres forzar solo uno activo:
+        // $usuario->tokens()->delete();
 
         $token = $usuario->createToken('auth_token')->plainTextToken;
 
-        $usuario->jugadores_registrados = $usuario->hasPermission('usuario')
-            ? $usuario->registrosJugadores()->with(['documentos', 'pagos', 'transferencias'])->get()
-            : [];
-
         return response()->json([
             'message' => 'Login exitoso',
-            'usuario' => $usuario,
-            'token' => $token
+            'token' => $token,
+            'usuario' => $usuario->load('rol.permisos.modulo') // Opcional: cargar rol con permisos
         ]);
     }
 
-    // * Método para cerrar sesión
+    // 🚪 Logout
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
+        $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Sesión cerrada correctamente']);
     }

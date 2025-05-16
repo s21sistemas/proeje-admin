@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Cotizacion;
 use App\Models\Venta;
 use Illuminate\Http\Request;
@@ -12,8 +13,20 @@ class CotizacionController extends Controller
     //  * Mostrar todos los registros.
     public function index()
     {
-        $registros = Cotizacion::with(['sucursal.cliente', 'venta'])->get();
+        $registros = Cotizacion::with(['sucursal.cliente', 'venta', 'sucursal_empresa'])->get();
         return response()->json($registros->append('situacion_fiscal_url'));
+    }
+
+    // PDF de la cotización
+    public function generarPDF($id)
+    {
+        $cotizacion = Cotizacion::with('sucursal.cliente', 'venta', 'sucursal_empresa')->findOrFail($id);
+
+        $nombre = $cotizacion->nombre_empresa ?? $cotizacion->sucursal->nombre_empresa;
+        $nombre = str_replace(' ', '_', $nombre);
+
+        $pdf = Pdf::loadView('pdf.cotizacion', compact('cotizacion'));
+        return $pdf->stream('cotizacion_de_' . $nombre . '.pdf');
     }
 
     //  * Crear un nuevo registro.
@@ -26,23 +39,27 @@ class CotizacionController extends Controller
             'servicios' => 'required|string',
             'guardias_dia' => 'required|integer',
             'precio_guardias_dia' => 'required|numeric',
+            'precio_guardias_dia_total' => 'required|numeric',
             'guardias_noche' => 'required|integer',
             'precio_guardias_noche' => 'required|numeric',
+            'precio_guardias_noche_total' => 'required|numeric',
             'cantidad_guardias' => 'required|integer',
-            'jefe_grupo' => 'required|in:SI,NO',
-            'precio_jefe_grupo' => 'nullable|numeric',
+            'jefe_turno' => 'required|in:SI,NO',
+            'precio_jefe_turno' => 'nullable|numeric',
             'supervisor' => 'required|in:SI,NO',
             'precio_supervisor' => 'nullable|numeric',
             'notas' => 'nullable|string',
             'costo_extra' => 'nullable|numeric',
             'subtotal' => 'required|numeric',
-            'impuesto' => 'nullable|boolean',
+            'impuesto' => 'required|numeric',
             'total' => 'required|numeric',
             'sucursal_id' => 'nullable|exists:sucursales,id',
 
             'soporte_documental' => 'required|in:SI,NO',
             'observaciones_soporte_documental' => 'nullable|string',
             'requisitos_pago_cliente' => 'nullable|string',
+
+            'sucursal_empresa_id' => 'required|exists:sucursales_empresa,id',
         ];
 
         $empresaRules = [
@@ -108,17 +125,19 @@ class CotizacionController extends Controller
             'servicios' => 'sometimes|string',
             'guardias_dia' => 'sometimes|integer',
             'precio_guardias_dia' => 'sometimes|numeric',
+            'precio_guardias_dia_total' => 'sometimes|numeric',
             'guardias_noche' => 'sometimes|integer',
             'precio_guardias_noche' => 'sometimes|numeric',
+            'precio_guardias_noche_total' => 'sometimes|numeric',
             'cantidad_guardias' => 'sometimes|integer',
-            'jefe_grupo' => 'sometimes|in:SI,NO',
-            'precio_jefe_grupo' => 'nullable|numeric',
+            'jefe_turno' => 'sometimes|in:SI,NO',
+            'precio_jefe_turno' => 'nullable|numeric',
             'supervisor' => 'sometimes|in:SI,NO',
             'precio_supervisor' => 'nullable|numeric',
             'notas' => 'nullable|string',
             'costo_extra' => 'nullable|numeric',
             'subtotal' => 'sometimes|numeric',
-            'impuesto' => 'nullable|boolean',
+            'impuesto' => 'sometimes|numeric',
             'total' => 'sometimes|numeric',
             'aceptada' => 'sometimes|in:NO,SI,PENDIENTE',
             'sucursal_id' => 'nullable|exists:sucursales,id',
@@ -126,6 +145,8 @@ class CotizacionController extends Controller
             'soporte_documental' => 'sometimes|in:SI,NO',
             'observaciones_soporte_documental' => 'nullable|string',
             'requisitos_pago_cliente' => 'nullable|string',
+
+            'sucursal_empresa_id' => 'sometimes|exists:sucursales_empresa,id',
         ];
 
         $empresaRules = [

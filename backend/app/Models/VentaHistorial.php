@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasLogs;
 
 class VentaHistorial extends Model
 {
+    use HasFactory, HasLogs;
+
     protected $table = 'ventas_historial';
 
     protected $fillable = [

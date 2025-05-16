@@ -1,7 +1,14 @@
 import { LoginForm } from '../components/LoginForm'
 import logo from '../assets/imgs/logo.png'
+import { useAuth } from '../context/AuthContext'
 
 export default function LoginPage() {
+  const { isAuthenticated } = useAuth()
+
+  if (isAuthenticated) {
+    return <Navigate to='/' replace />
+  }
+
   return (
     <div className='flex min-h-screen items-center justify-center bg-primary-dark p-4'>
       <div className='mx-auto w-full max-w-md rounded-lg bg-white p-6 shadow-md'>

@@ -15,6 +15,6 @@ class GuardiasSeeder extends Seeder
      */
     public function run()
     {
-        Guardia::factory()->count(20)->create();
+        Guardia::factory()->count(100)->create();
     }
 }

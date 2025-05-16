@@ -10,7 +10,8 @@ export default function ReportesPage() {
     generateReport,
     loadOptionsBancos,
     handleInputChange,
-    loadOptionsProveedores
+    loadOptionsProveedores,
+    loadOptionsVehiculos
   } = useReportes()
 
   const handleGeneretReport = (e) => {
@@ -37,6 +38,13 @@ export default function ReportesPage() {
       }
     }
 
+    if (formReport.modulo === 'boletas-gasolina') {
+      newData = {
+        ...formReport,
+        vehiculo_id: formReport.vehiculo_id.value
+      }
+    }
+
     generateReport(newData)
   }
 
@@ -54,6 +62,7 @@ export default function ReportesPage() {
           handleInputChange={handleInputChange}
           loadOptionsBancos={loadOptionsBancos}
           loadOptionsProveedores={loadOptionsProveedores}
+          loadOptionsVehiculos={loadOptionsVehiculos}
           formReport={formReport}
         />
       </div>

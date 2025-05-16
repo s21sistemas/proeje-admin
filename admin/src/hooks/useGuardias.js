@@ -1,6 +1,8 @@
 import { toast } from 'sonner'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
+  blackList,
+  checkBlackList,
   createGuardia,
   getGuardias,
   removeGuardia,
@@ -14,6 +16,8 @@ import estadosData from '../utils/estados.json'
 import estadosMunicipiosData from '../utils/municipios.json'
 
 export const useGuardias = () => {
+  let toastId
+
   const [estados, setEstados] = useState([])
   const [municipios, setMunicipios] = useState([])
   const [estadosMunicipios, setEstadosMunicipios] = useState({})
@@ -68,6 +72,40 @@ export const useGuardias = () => {
     }
   })
 
+  const blackListMutation = useMutation({
+    mutationFn: blackList,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['guardias'] })
+      toast.dismiss(toastId)
+      toast.warning('Guardia en lista negra')
+      closeModal()
+    },
+    onError: (error) => {
+      toast.dismiss(toastId)
+      toast.error(error.message)
+    }
+  })
+
+  const checkBlackListMutation = useMutation({
+    mutationFn: checkBlackList,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['guardias'] })
+      toast.dismiss(toastId)
+
+      toast.success(data.message)
+    },
+
+    onError: (error) => {
+      toast.dismiss(toastId)
+      toast.error(error.message)
+    }
+  })
+
+  const handleCheckBlackList = (data) => {
+    toastId = toast.loading('Verificando si el guardia está en lista negra...')
+    checkBlackListMutation.mutate(data)
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     Swal.fire({
@@ -81,16 +119,26 @@ export const useGuardias = () => {
       }
     })
 
+    const newData = {
+      ...formData,
+      sucursal_empresa_id: formData.sucursal_empresa_id.value
+    }
+
     if (modalType === 'add') {
-      createMutation.mutate(formData)
+      createMutation.mutate(newData)
     } else if (modalType === 'edit') {
-      updateMutation.mutate(formData)
+      updateMutation.mutate(newData)
     }
   }
 
   const handleDelete = (id) => {
     deleteMutation.mutate(id)
     closeModal()
+  }
+
+  const handleBlackList = (data) => {
+    toastId = toast.loading('Mandando al guardia a la lista negra...')
+    blackListMutation.mutate(data)
   }
 
   useEffect(() => {
@@ -132,6 +180,8 @@ export const useGuardias = () => {
     deleteMutation,
     handleSubmit,
     handleDelete,
+    handleBlackList,
+    handleCheckBlackList,
     opcionesEstados,
     municipios
   }

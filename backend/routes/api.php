@@ -30,6 +30,24 @@ use App\Http\Controllers\ReporteCarteraVencidaController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\ModuloController;
+use App\Http\Controllers\LogController;
+use App\Http\Controllers\IncapacidadController;
+use App\Http\Controllers\VacacionController;
+use App\Http\Controllers\TiempoExtraController;
+use App\Http\Controllers\FaltaController;
+use App\Http\Controllers\DescuentoController;
+use App\Http\Controllers\PrestamoController;
+use App\Http\Controllers\AbonoPrestamoController;
+use App\Http\Controllers\EstadoCuentaController;
+use App\Http\Controllers\SucursalEmpresaController;
+use App\Http\Controllers\ModuloPrestamoController;
+use App\Http\Controllers\ModuloDescuentoController;
+use App\Http\Controllers\BlackListController;
+use App\Http\Controllers\BoletaGasolinaController;
+use App\Http\Controllers\QRGeneradoController;
+use App\Http\Controllers\QRRecorridoGuardiaController;
+use App\Http\Controllers\PagoEmpleadoController;
+use App\Http\Controllers\CheckGuardiaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -45,32 +63,60 @@ use App\Http\Controllers\ModuloController;
 // Login y pre-registro
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/registro', [UsuarioController::class, 'registro']);
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
-// Route::middleware('auth:sanctum')->group(function () {
+// Rutas que vienen de la app movil
+Route::get('guardias-app', [GuardiaController::class, 'getGuardiaApp']);
+Route::get('orden-servicio-app', [OrdenServicioController::class, 'ordenServicioGuardia']);
+Route::apiResource('recorridos-guardia', QRRecorridoGuardiaController::class);
+Route::get('qr-validar/{uuid}', [QRRecorridoGuardiaController::class, 'validar']);
 
-    // Modulos de la API (rutas protegidas)
-    Route::apiResource('count-adminpage', CountPageController::class);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::apiResource('perfil', PerfilController::class)->only(['index']);
+});
 
+Route::get('count-adminpage', [CountPageController::class, 'getCount']);
+
+// Modulos de la API (rutas protegidas)
+// Route::middleware(['auth:sanctum', 'permiso.dinamico'])->group(function () {
     Route::apiResource('roles', RolController::class);
     Route::apiResource('usuarios', UsuarioController::class);
-    Route::apiResource('perfil', PerfilController::class);
+    Route::apiResource('modulos', ModuloController::class);
     Route::apiResource('guardias', GuardiaController::class);
+    Route::apiResource('sucursales-empresa', SucursalEmpresaController::class);
     Route::get('guardias-asignado', [GuardiaController::class, 'guardiaAsignado']);
-    Route::get('guardias-rango', [GuardiaController::class, 'guardiaRango']);
-    Route::get('guardias-supervisor', [GuardiaController::class, 'guardiaSupervisor']);
-    Route::get('guardias-jefegrupo', [GuardiaController::class, 'guardiaJefeGrupo']);
-    Route::apiResource('recursos-humanos', RecursosHumanosController::class);
+    Route::get('guardias-sucursal', [GuardiaController::class, 'getGuardiaBySucursal']);
+    Route::get('supervisores-sucursal', [GuardiaController::class, 'getSupervisorBySucursal']);
+    Route::get('jefes-sucursal', [GuardiaController::class, 'getJefeBySucursal']);
+    Route::apiResource('blacklist', BlackListController::class);
+    Route::post('check-blacklist', [GuardiaController::class, 'checkBlackList']);
+    Route::apiResource('incapacidades', IncapacidadController::class);
+    Route::apiResource('vacaciones', VacacionController::class);
+    Route::apiResource('tiempo-extra', TiempoExtraController::class);
+    Route::apiResource('faltas', FaltaController::class);
+    Route::apiResource('descuentos', DescuentoController::class);
+    Route::apiResource('prestamos', PrestamoController::class);
+    Route::apiResource('pagos-empleados', PagoEmpleadoController::class);
+    Route::apiResource('modulo-prestamos', ModuloPrestamoController::class);
+    Route::apiResource('modulo-descuentos', ModuloDescuentoController::class);
+    Route::get('prestamos-pendientes', [PrestamoController::class, 'prestamosPendientes']);
+    Route::get('generar-estadocuenta-guardia', [EstadoCuentaController::class, 'generarEstadoCuentaGuardia']);
+    Route::apiResource('abonos-prestamo', AbonoPrestamoController::class);
     Route::apiResource('bancos', BancoController::class);
+    Route::get('generar-estadocuenta-banco', [EstadoCuentaController::class, 'generarEstadoCuentaBanco']);
     Route::apiResource('movimientos-bancarios', MovimientoBancarioController::class);
     Route::apiResource('cotizaciones', CotizacionController::class);
     Route::apiResource('clientes', ClienteController::class);
-    Route::apiResource('sucursales', SucursalController::class);
+    Route::get('generar-estadocuenta-cliente', [EstadoCuentaController::class, 'generarEstadoCuentaCliente']);
     Route::get('sucursales-cliente', [SucursalController::class, 'sucursalesCliente']);
+    Route::apiResource('sucursales', SucursalController::class);
     Route::apiResource('proveedores', ProveedorController::class);
+    Route::get('generar-estadocuenta-proveedor', [EstadoCuentaController::class, 'generarEstadoCuentaProveedor']);
     Route::apiResource('articulos', ArticuloController::class);
     Route::get('articulos-asignar', [ArticuloController::class, 'articulosAsignar']);
     Route::apiResource('vehiculos', VehiculoController::class);
     Route::get('vehiculos-disponibles', [VehiculoController::class, 'getVehiculosDisponibles']);
+    Route::apiResource('boletas-gasolina', BoletaGasolinaController::class);
     Route::apiResource('ordenes-compra', OrdenCompraController::class);
     Route::apiResource('compras', CompraController::class);
     Route::apiResource('gastos', GastoController::class);
@@ -87,11 +133,11 @@ Route::post('/registro', [UsuarioController::class, 'registro']);
     Route::get('equipo-disponible/{articulo_id}', [AlmacenController::class, 'obtenerEquipoDisponible']);
     Route::apiResource('orden-servicio', OrdenServicioController::class);
     Route::post('generador-reportes', [ReporteController::class, 'getReport']);
+    Route::post('reporte-rh', [ReporteController::class, 'generateReportRH']);
     Route::apiResource('cartera-vencida', ReporteCarteraVencidaController::class);
-    Route::apiResource('usuarios', UsuarioController::class);
-    Route::apiResource('roles', RolController::class);
-    Route::apiResource('modulos', ModuloController::class);
+    Route::apiResource('logs', LogController::class);
+    Route::apiResource('generar-qr', QRGeneradoController::class);
+    Route::apiResource('check-guardia', CheckGuardiaController::class);
+    Route::get('/check-guardia/abierto/{guardiaId}', [CheckGuardiaController::class, 'ultimoCheckAbierto']);
 
-    // Logout
-    Route::post('/logout', [AuthController::class, 'logout']);
 // });

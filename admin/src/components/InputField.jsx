@@ -1,6 +1,7 @@
 import { Eye } from 'lucide-react'
 import AsyncSelect from 'react-select/async'
 import Select from 'react-select'
+import { useLocation } from 'react-router'
 
 export const InputField = ({
   label,
@@ -19,6 +20,8 @@ export const InputField = ({
   step = '1',
   multiple = false
 }) => {
+  const { pathname } = useLocation()
+
   return (
     <div className={`sm:col-span-6 ${classInput}`}>
       <div className='flex justify-between'>
@@ -125,7 +128,7 @@ export const InputField = ({
             onChange={onChange}
             disabled={disabled}
             required={required}
-            rows={3}
+            rows={pathname === '/logs' && value !== '' ? 8 : 3}
             className='shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md p-2 border disabled:bg-gray-100'
           />
         ) : type === 'number' ? (

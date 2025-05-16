@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlackList;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -12,36 +13,96 @@ class GuardiaController extends Controller
     //  * Mostrar todos los registros.
     public function index()
     {
-        $guardias = Guardia::get();
+        $guardias = Guardia::with('sucursal_empresa')->where('eliminado', false)->latest()->get();
+
         return response()->json($guardias->append(['curp_url', 'ine_url', 'acta_nacimiento_url', 'comprobante_domicilio_url', 'constancia_situacion_fiscal_url', 'comprobante_estudios_url', 'carta_recomendacion_url', 'antecedentes_no_penales_url', 'otro_archivo_url', 'antidoping_url', 'foto_url']));
+    }
+
+    //  Revisar si está en blacklist
+    public function checkBlackList(Request $request)
+    {
+        $nombre     = $request->nombre;
+        $apellido_p = $request->apellido_p;
+        $apellido_m = $request->apellido_m;
+
+        // Buscar coincidencias en la lista negra
+        $coincidencias = BlackList::whereHas('guardia', function ($query) use ($nombre, $apellido_p, $apellido_m) {
+            $query->where('nombre', $nombre)
+                ->where('apellido_p', $apellido_p)
+                ->where('apellido_m', $apellido_m);
+        })->with('guardia')->get();
+
+        if ($coincidencias->count() > 0) {
+            $nombres = $coincidencias->map(function ($item) {
+                return $item->guardia->nombre . ' ' . $item->guardia->apellido_p . ' ' . $item->guardia->apellido_m . ' - Motivo: ' . ($item->motivo_baja ?? 'No especificado');
+            });
+
+            return response()->json(['message' => 'Revisa la listra negra, se encontraron coincidencias en el nombre.'], 422);
+        }else{
+            return response()->json(['message' => 'No se encontró ninguna coincidencia en la lista negra.'], 200);
+        }
+    }
+
+    // consulta de la app
+    public function getGuardiaApp(Request $request)
+    {
+        $guardias = Guardia::where('numero_empleado', $request->numero_empleado)->where('eliminado', false)->get();
+
+        return response()->json($guardias);
     }
 
     //  * Mostrar todos los registros.
     public function guardiaAsignado()
     {
-        $guardias = Guardia::where('estatus', 'Asignado')->get();
+        $guardias = Guardia::where('estatus', 'Asignado')->where('eliminado', false)->get();
+
         return response()->json($guardias->append(['curp_url', 'ine_url', 'acta_nacimiento_url', 'comprobante_domicilio_url', 'constancia_situacion_fiscal_url', 'comprobante_estudios_url', 'carta_recomendacion_url', 'antecedentes_no_penales_url', 'otro_archivo_url', 'antidoping_url', 'foto_url']));
     }
 
-    //  * Mostrar todos los registros.
-    public function guardiaRango()
+    // guardias por sucursal
+    public function getGuardiaBySucursal(Request $request)
     {
-        $guardias = Guardia::where('estatus', 'Disponible')->where('rango', 'Guardia')->get();
-        return response()->json($guardias->append(['curp_url', 'ine_url', 'acta_nacimiento_url', 'comprobante_domicilio_url', 'constancia_situacion_fiscal_url', 'comprobante_estudios_url', 'carta_recomendacion_url', 'antecedentes_no_penales_url', 'otro_archivo_url', 'antidoping_url', 'foto_url']));
+        $registro = Guardia::with('sucursal_empresa')
+            ->where('sucursal_empresa_id', $request->id)
+            ->where('estatus', 'Disponible')
+            ->where('rango', 'Guardia')
+            ->where('eliminado', false)->get();
+
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
+
+        return response()->json($registro);
     }
 
-    //  * Mostrar todos los registros.
-    public function guardiaSupervisor()
+    public function getSupervisorBySucursal(Request $request)
     {
-        $guardias = Guardia::where('estatus', 'Disponible')->where('rango', 'Supervisor')->get();
-        return response()->json($guardias->append(['curp_url', 'ine_url', 'acta_nacimiento_url', 'comprobante_domicilio_url', 'constancia_situacion_fiscal_url', 'comprobante_estudios_url', 'carta_recomendacion_url', 'antecedentes_no_penales_url', 'otro_archivo_url', 'antidoping_url', 'foto_url']));
+        $registro = Guardia::with('sucursal_empresa')
+            ->where('sucursal_empresa_id', $request->id)
+            ->where('estatus', 'Disponible')
+            ->where('rango', 'Supervisor')
+            ->where('eliminado', false)->get();
+
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
+
+        return response()->json($registro);
     }
 
-    //  * Mostrar todos los registros.
-    public function guardiaJefeGrupo()
+    public function getJefeBySucursal(Request $request)
     {
-        $guardias = Guardia::where('estatus', 'Disponible')->where('rango', 'Jefe de grupo')->get();
-        return response()->json($guardias->append(['curp_url', 'ine_url', 'acta_nacimiento_url', 'comprobante_domicilio_url', 'constancia_situacion_fiscal_url', 'comprobante_estudios_url', 'carta_recomendacion_url', 'antecedentes_no_penales_url', 'otro_archivo_url', 'antidoping_url', 'foto_url']));
+        $registro = Guardia::with('sucursal_empresa')
+            ->where('sucursal_empresa_id', $request->id)
+            ->where('estatus', 'Disponible')
+            ->where('rango', 'Jefe de turno')
+            ->where('eliminado', false)->get();
+
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
+
+        return response()->json($registro);
     }
 
     //  * Crear un nuevo registro.
@@ -52,7 +113,6 @@ class GuardiaController extends Controller
             'apellido_p' => 'required|string|max:100',
             'apellido_m' => 'required|string|max:100',
             'correo' => 'required|email|unique:guardias,correo',
-            'codigo_acceso' => 'required|string',
             'calle' => 'required|string|max:100',
             'numero' => 'required|string|max:20',
             'colonia' => 'required|string|max:50',
@@ -81,8 +141,18 @@ class GuardiaController extends Controller
             'fecha_antidoping' => 'nullable|date',
             'antidoping' => 'nullable|file|mimes:pdf|max:2048',
 
-            'rango' => 'required|in:Guardia,Supervisor,Jefe de grupo',
+            'rango' => 'required|in:Guardia,Supervisor,Jefe de turno',
 
+            'sueldo_base' => 'required|numeric',
+            'dias_laborales' => 'required|numeric',
+            'aguinaldo' => 'required|numeric',
+            'imss' => 'required|numeric',
+            'infonavit' => 'required|numeric',
+            'fonacot' => 'required|numeric',
+            'retencion_isr' => 'required|numeric',
+
+            'sucursal_empresa_id' => 'required|exists:sucursales_empresa,id',
+            'numero_empleado' => 'required|string|unique:guardias,numero_empleado',
         ]);
 
         if ($request->hasFile('foto')) {
@@ -126,13 +196,13 @@ class GuardiaController extends Controller
     //  * Mostrar un solo registro por su ID.
     public function show($id)
     {
-        $registro = Guardia::find($id);
+        $registro = Guardia::with('sucursal_empresa')->where('eliminado', false)->find($id);
 
         if (!$registro) {
             return response()->json(['error' => 'Registro no encontrado'], 404);
         }
 
-        return response()->json($registro->append(['curp_url', 'ine_url', 'acta_nacimiento_url', 'comprobante_domicilio_url', 'constancia_situacion_fiscal', 'comprobante_estudios', 'carta_recomendacion', 'antecedentes_no_penales', 'otro_archivo', 'antidoping', 'foto_url']));
+        return response()->json($registro->append(['curp_url', 'ine_url', 'acta_nacimiento_url', 'comprobante_domicilio_url', 'constancia_situacion_fiscal_url', 'comprobante_estudios_url', 'carta_recomendacion_url', 'antecedentes_no_penales_url', 'otro_archivo_url', 'antidoping_url', 'foto_url']));
     }
 
     //  * Actualizar un registro.
@@ -178,7 +248,18 @@ class GuardiaController extends Controller
             'antidoping' => 'nullable|file|mimes:pdf|max:2048',
 
             'estatus' => 'sometimes|in:Disponible,Descansado,Dado de baja,Asignado',
-            'rango' => 'sometimes|in:Guardia,Supervisor,Jefe de grupo',
+            'rango' => 'sometimes|in:Guardia,Supervisor,Jefe de turno',
+
+            'sueldo_base' => 'sometimes|numeric',
+            'dias_laborales' => 'sometimes|numeric',
+            'aguinaldo' => 'sometimes|numeric',
+            'imss' => 'sometimes|numeric',
+            'infonavit' => 'sometimes|numeric',
+            'fonacot' => 'sometimes|numeric',
+            'retencion_isr' => 'sometimes|numeric',
+
+            'sucursal_empresa_id' => 'sometimes|exists:sucursales_empresa,id',
+            'nunmero_empleado' => 'sometimes|email|unique:guardias,nunmero_empleado,' . $id,
         ]);
 
         if ($request->hasFile('foto')) {

@@ -20,7 +20,7 @@ class RolController extends Controller
     {
         $request->validate([
             'nombre' => 'required|string|max:100|unique:roles,nombre',
-            'descripcion' => 'required|string',
+            'descripcion' => 'nullable|string',
             'permisos' => 'required|array',
         ]);
 
@@ -60,9 +60,9 @@ class RolController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nombre' => 'required|string|max:100|unique:roles,nombre,' . $id,
-            'descripcion' => 'required|string',
-            'permisos' => 'required|array',
+            'nombre' => 'sometimes|string|max:100|unique:roles,nombre,' . $id,
+            'descripcion' => 'nullable|string',
+            'permisos' => 'sometimes|array',
         ]);
 
         DB::beginTransaction();

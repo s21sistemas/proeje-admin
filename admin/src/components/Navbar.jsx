@@ -2,7 +2,7 @@ import { Menu, ChevronDown, User, LogOut, ChevronUp } from 'lucide-react'
 import { Link } from 'react-router'
 import img_default from '../assets/imgs/usuarios/default.png'
 import { useState } from 'react'
-import { useAuth } from '../hooks/useAuth'
+import { useAuth } from '../context/AuthContext'
 
 export const Navbar = ({ toggleSidebar }) => {
   const { user, logout } = useAuth()

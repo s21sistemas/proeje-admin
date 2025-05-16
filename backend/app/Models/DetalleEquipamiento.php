@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasLogs;
 
 class DetalleEquipamiento extends Model
 {
-    use HasFactory;
+    use HasFactory, HasLogs;
 
     protected $table = 'detalles_equipamiento';
 

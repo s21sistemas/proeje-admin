@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class CountPageController extends Controller
 {
     //  * Mostrar todos los registros.
-    public function index()
+    public function getCount()
     {
         $clientes = Cliente::count();
         $proveedores = Proveedor::count();

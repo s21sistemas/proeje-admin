@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasLogs;
 
 class Permiso extends Model
 {
-    use HasFactory;
+    use HasFactory, HasLogs;
 
     protected $table = 'permisos';
 
@@ -20,7 +21,8 @@ class Permiso extends Model
         return $this->belongsTo(Rol::class);
     }
 
-    public function modulo() {
-        return $this->belongsTo(Modulo::class);
+    public function modulo()
+    {
+        return $this->belongsTo(Modulo::class, 'modulo_id');
     }
 }

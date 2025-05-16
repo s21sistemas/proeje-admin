@@ -63,6 +63,7 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'permiso' => \App\Http\Middleware\PermisoMiddleware::class,
+        'permiso' => \App\Http\Middleware\VerificarPermisosModulo::class,
+        'permiso.dinamico' => \App\Http\Middleware\PermisoDinamicoMiddleware::class,
     ];
 }

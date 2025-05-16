@@ -48,14 +48,14 @@ export const getOrdenServicio = async () => {
           }
         : null
 
-      // Si existe jefe de grupo
-      const jefeGrupo = orden.ordenes_servicio_guardias.find(
-        (g) => g.guardia.rango === 'Jefe de grupo'
+      // Si existe jefe de turno
+      const jefeTurno = orden.ordenes_servicio_guardias.find(
+        (g) => g.guardia.rango === 'Jefe de turno'
       )
-      const jefe_grupo_id = jefeGrupo
+      const jefe_turno_id = jefeTurno
         ? {
-            label: `${jefeGrupo.guardia.nombre} ${jefeGrupo.guardia.apellido_p} ${jefeGrupo.guardia.apellido_m}`,
-            value: jefeGrupo.guardia.id
+            label: `${jefeTurno.guardia.nombre} ${jefeTurno.guardia.apellido_p} ${jefeTurno.guardia.apellido_m}`,
+            value: jefeTurno.guardia.id
           }
         : null
 
@@ -85,9 +85,9 @@ export const getOrdenServicio = async () => {
         venta_id,
         guardias_id,
         supervisor_id,
-        jefe_grupo_id,
+        jefe_turno_id,
         supervisor: orden.venta.cotizacion.supervisor,
-        jefe_grupo: orden.venta.cotizacion.jefe_grupo,
+        jefe_turno: orden.venta.cotizacion.jefe_turno,
         nombre_empresa,
         asignados,
         inicio_format: dayjs(orden.fecha_inicio).format('DD/MM/YYYY'),

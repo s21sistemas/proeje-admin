@@ -42,16 +42,22 @@ export const createCotizacion = async (data) => {
     }
 
     // Datos obligatorios
+    formData.append('sucursal_empresa_id', data.sucursal_empresa_id)
     formData.append('credito_dias', data.credito_dias)
     formData.append('servicios', data.servicios)
     formData.append('guardias_dia', data.guardias_dia)
     formData.append('precio_guardias_dia', data.precio_guardias_dia)
+    formData.append('precio_guardias_dia_total', data.precio_guardias_dia_total)
     formData.append('guardias_noche', data.guardias_noche)
     formData.append('precio_guardias_noche', data.precio_guardias_noche)
+    formData.append(
+      'precio_guardias_noche_total',
+      data.precio_guardias_noche_total
+    )
     formData.append('cantidad_guardias', data.cantidad_guardias)
-    formData.append('jefe_grupo', data.jefe_grupo)
-    if (data?.precio_jefe_grupo)
-      formData.append('precio_jefe_grupo', data?.precio_jefe_grupo)
+    formData.append('jefe_turno', data.jefe_turno)
+    if (data?.precio_jefe_turno)
+      formData.append('precio_jefe_turno', data?.precio_jefe_turno)
     formData.append('supervisor', data.supervisor)
     if (data?.precio_supervisor)
       formData.append('precio_supervisor', data?.precio_supervisor)
@@ -66,7 +72,7 @@ export const createCotizacion = async (data) => {
         data?.observaciones_soporte_documental
       )
 
-    formData.append('impuesto', data.impuesto ? '1' : '0')
+    formData.append('impuesto', data.impuesto)
     formData.append('subtotal', data.subtotal)
     if (data?.descuento_porcentaje)
       formData.append('descuento_porcentaje', data?.descuento_porcentaje)
@@ -128,7 +134,11 @@ export const getCotizacion = async () => {
             metodo_pago: cotizacion?.venta?.metodo_pago || null,
             numero_factura: cotizacion?.venta?.numero_factura || null,
             fecha_emision: cotizacion?.venta?.fecha_emision || null,
-            nota_credito: cotizacion?.venta?.nota_credito || null
+            nota_credito: cotizacion?.venta?.nota_credito || null,
+            sucursal_empresa_id: {
+              label: cotizacion.sucursal_empresa.nombre_sucursal,
+              value: cotizacion.sucursal_empresa.id
+            }
           }
         })
       : []
@@ -183,16 +193,22 @@ export const updateCotizacion = async (data) => {
     }
 
     // Datos obligatorios
+    formData.append('sucursal_empresa_id', data.sucursal_empresa_id)
     formData.append('credito_dias', data.credito_dias)
     formData.append('servicios', data.servicios)
     formData.append('guardias_dia', data.guardias_dia)
     formData.append('precio_guardias_dia', data.precio_guardias_dia)
+    formData.append('precio_guardias_dia_total', data.precio_guardias_dia_total)
     formData.append('guardias_noche', data.guardias_noche)
     formData.append('precio_guardias_noche', data.precio_guardias_noche)
+    formData.append(
+      'precio_guardias_noche_total',
+      data.precio_guardias_noche_total
+    )
     formData.append('cantidad_guardias', data.cantidad_guardias)
-    formData.append('jefe_grupo', data.jefe_grupo)
-    if (data?.precio_jefe_grupo)
-      formData.append('precio_jefe_grupo', data?.precio_jefe_grupo)
+    formData.append('jefe_turno', data.jefe_turno)
+    if (data?.precio_jefe_turno)
+      formData.append('precio_jefe_turno', data?.precio_jefe_turno)
     formData.append('supervisor', data.supervisor)
     if (data?.precio_supervisor)
       formData.append('precio_supervisor', data?.precio_supervisor)
@@ -207,7 +223,7 @@ export const updateCotizacion = async (data) => {
         data?.observaciones_soporte_documental
       )
 
-    formData.append('impuesto', data.impuesto ? '1' : '0')
+    formData.append('impuesto', data.impuesto)
     formData.append('subtotal', data.subtotal)
     if (data?.descuento_porcentaje)
       formData.append('descuento_porcentaje', data?.descuento_porcentaje)

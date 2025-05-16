@@ -16,7 +16,7 @@ class RolSeeder extends Seeder
     public function run()
     {
         DB::table('roles')->insert([
-            ['nombre' => 'Super admin', 'permisos' => 'consultar,agregar,actualizar,eliminar', 'modulos' => 'guardias,rh'],
+            ['nombre' => 'Super admin', 'descripcion' => '', 'modulos' => 'guardias,rh'],
         ]);
     }
 }

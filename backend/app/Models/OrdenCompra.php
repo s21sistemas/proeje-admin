@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\HasLogs;
 
 class OrdenCompra extends Model
 {
-    use HasFactory;
+    use HasFactory, HasLogs;
 
     protected $table = 'ordenes_compra';
 

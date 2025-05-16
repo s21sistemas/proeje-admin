@@ -71,7 +71,7 @@ export const CotizacionNormal = ({
           required={type === 'file' ? false : required}
           value={formData[name] || ''}
           onChange={type === 'file' ? handleFileChange : handleInputChange}
-          disabled={view}
+          disabled={formData.aceptada === 'SI' ? true : view}
           classInput='md:col-span-1'
           document={formData[`${name}_url`] || null}
         />

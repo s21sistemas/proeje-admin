@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('banco_id')->constrained('bancos')->onDelete('cascade');
             $table->string('concepto');
             $table->enum('metodo_pago', ['Transferencia bancaria', 'Tarjeta de crédito/débito', 'Efectivo', 'Cheques']);
-            $table->boolean('impuesto')->default(false);
+            $table->decimal('impuesto', 10, 2)->default(0);
             $table->decimal('subtotal', 10, 2);
             $table->decimal('total', 10, 2);
             $table->timestamps();

@@ -1,11 +1,8 @@
-import { generarCodigoAcceso } from '../utils/generarCodigoAcceso'
 import { apiClient, apiClientForm } from './configAxios'
 
 // Crear un registro
 export const createGuardia = async (data) => {
   try {
-    const passwordSegura = generarCodigoAcceso()
-
     const formData = new FormData()
     formData.append('nombre', data.nombre)
     formData.append('apellido_p', data.apellido_p)
@@ -24,12 +21,20 @@ export const createGuardia = async (data) => {
     formData.append('edad', data.edad)
     formData.append('telefono_emergencia', data.telefono_emergencia)
     formData.append('contacto_emergencia', data.contacto_emergencia)
-    formData.append('codigo_acceso', passwordSegura)
     formData.append('foto', data.foto)
     formData.append('curp', data.curp)
     formData.append('ine', data.ine)
     formData.append('estatus', data.estatus)
     formData.append('rango', data.rango)
+    formData.append('sucursal_empresa_id', data.sucursal_empresa_id)
+    formData.append('numero_empleado', data.numero_empleado)
+    formData.append('sueldo_base', data.sueldo_base)
+    formData.append('dias_laborales', data.dias_laborales)
+    formData.append('aguinaldo', data.aguinaldo)
+    formData.append('imss', data.imss)
+    formData.append('infonavit', data.infonavit)
+    formData.append('fonacot', data.fonacot)
+    formData.append('retencion_isr', data.retencion_isr)
     formData.append('acta_nacimiento', data.acta_nacimiento)
     formData.append('comprobante_domicilio', data.comprobante_domicilio)
     formData.append(
@@ -74,7 +79,11 @@ export const getGuardias = async () => {
       ? data.map((guardia) => ({
           ...guardia,
           nombre_completo: `${guardia.nombre} ${guardia.apellido_p} ${guardia.apellido_m}`,
-          direccion_completa: `${guardia.calle} ${guardia.numero} ${guardia.colonia} ${guardia.cp}`
+          nombre_sucursal: guardia.sucursal_empresa.nombre_sucursal,
+          sucursal_empresa_id: {
+            label: guardia.sucursal_empresa.nombre_sucursal,
+            value: guardia.sucursal_empresa.id
+          }
         }))
       : []
 
@@ -85,60 +94,57 @@ export const getGuardias = async () => {
   }
 }
 
-// Leer registros de guardias
-export const getGuardiasRango = async () => {
+export const getGuardiasBySucursal = async (id) => {
   try {
-    const response = await apiClient.get('guardias-rango')
+    const response = await apiClient.get('guardias-sucursal?id=' + id)
     const { data } = response
 
-    const newData = Array.isArray(data)
-      ? data.map((guardia) => ({
-          ...guardia,
-          nombre_completo: `${guardia.nombre} ${guardia.apellido_p} ${guardia.apellido_m}`
-        }))
-      : []
-
-    return newData
+    return data.map((guardia) => ({
+      id: guardia.id,
+      nombre_completo: `${guardia.nombre} ${guardia.apellido_p} ${guardia.apellido_m}`
+    }))
   } catch (error) {
     console.error('Error al obetener el registro', error)
     throw new Error(error.response.data.message)
   }
 }
 
-// Leer registros supervisores
-export const getSupervisores = async () => {
+export const getSupervisorBySucursal = async (id) => {
   try {
-    const response = await apiClient.get('guardias-supervisor')
+    const response = await apiClient.get('supervisores-sucursal?id=' + id)
     const { data } = response
 
-    const newData = Array.isArray(data)
-      ? data.map((guardia) => ({
-          ...guardia,
-          nombre_completo: `${guardia.nombre} ${guardia.apellido_p} ${guardia.apellido_m}`
-        }))
-      : []
-
-    return newData
+    return data.map((guardia) => ({
+      value: guardia.id,
+      label: `${guardia.nombre} ${guardia.apellido_p} ${guardia.apellido_m}`
+    }))
   } catch (error) {
     console.error('Error al obetener el registro', error)
     throw new Error(error.response.data.message)
   }
 }
 
-// Leer registros jefes de grupo
-export const getJefeGrupo = async () => {
+export const getJefeBySucursal = async (id) => {
   try {
-    const response = await apiClient.get('guardias-jefegrupo')
+    const response = await apiClient.get('jefes-sucursal?id=' + id)
     const { data } = response
 
-    const newData = Array.isArray(data)
-      ? data.map((guardia) => ({
-          ...guardia,
-          nombre_completo: `${guardia.nombre} ${guardia.apellido_p} ${guardia.apellido_m}`
-        }))
-      : []
+    return data.map((guardia) => ({
+      value: guardia.id,
+      label: `${guardia.nombre} ${guardia.apellido_p} ${guardia.apellido_m}`
+    }))
+  } catch (error) {
+    console.error('Error al obetener el registro', error)
+    throw new Error(error.response.data.message)
+  }
+}
 
-    return newData
+export const getGuardiaById = async (id) => {
+  try {
+    const response = await apiClient.get('guardias/' + id)
+    const { data } = response
+
+    return data
   } catch (error) {
     console.error('Error al obetener el registro', error)
     throw new Error(error.response.data.message)
@@ -171,6 +177,15 @@ export const updateGuardia = async (data) => {
     formData.append('contacto_emergencia', data.contacto_emergencia)
     formData.append('estatus', data.estatus)
     formData.append('rango', data.rango)
+    formData.append('sucursal_empresa_id', data.sucursal_empresa_id)
+    formData.append('numero_empleado', data.numero_empleado)
+    formData.append('sueldo_base', data.sueldo_base)
+    formData.append('dias_laborales', data.dias_laborales)
+    formData.append('aguinaldo', data.aguinaldo)
+    formData.append('imss', data.imss)
+    formData.append('infonavit', data.infonavit)
+    formData.append('fonacot', data.fonacot)
+    formData.append('retencion_isr', data.retencion_isr)
 
     if (data.foto instanceof File) {
       formData.append('foto', data.foto)
@@ -224,6 +239,26 @@ export const updateGuardia = async (data) => {
 export const removeGuardia = async (id) => {
   try {
     const response = await apiClient.delete(`guardias/${id}`)
+    return response.data
+  } catch (error) {
+    console.error('Error al eliminar registro:', error)
+    throw new Error(error.response.data.message)
+  }
+}
+
+export const blackList = async (data) => {
+  try {
+    const response = await apiClient.post('blacklist', data)
+    return response.data
+  } catch (error) {
+    console.error('Error al eliminar registro:', error)
+    throw new Error(error.response.data.message)
+  }
+}
+
+export const checkBlackList = async (data) => {
+  try {
+    const response = await apiClient.post('check-blacklist', data)
     return response.data
   } catch (error) {
     console.error('Error al eliminar registro:', error)

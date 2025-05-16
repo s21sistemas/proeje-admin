@@ -17,12 +17,31 @@ class OrdenServicioController extends Controller
         return response()->json($registros);
     }
 
+    public function ordenServicioGuardia(Request $request)
+    {
+        $request->validate([
+            'guardia_id' => 'required|exists:guardias,id'
+        ]);
+
+        $guardiaId = $request->guardia_id;
+
+        $orden = OrdenServicio::where('estatus', 'En proceso')
+            ->whereHas('guardias', function ($query) use ($guardiaId) {
+                $query->where('guardia_id', $guardiaId);
+            })
+            ->latest()
+            ->first();
+
+        return response()->json($orden);
+    }
+
     //  * Crear un nuevo registro.
     public function store(Request $request)
     {
         $data = $request->validate([
             'venta_id' => 'required|exists:ventas,id',
             'domicilio_servicio' => 'required|string',
+            'codigo_orden_servicio' => 'required|string|unique:ordenes_servicios,codigo_orden_servicio',
             'nombre_responsable_sitio' => 'required|string|max:100',
             'telefono_responsable_sitio' => 'required|string|max:15',
             'fecha_inicio' => 'required|date',
@@ -35,8 +54,8 @@ class OrdenServicioController extends Controller
 
             // Validación para los supervisores (si existe)
             'supervisor_id' => 'nullable|integer|exists:guardias,id',
-            // Validación para los jefes de grupo (si existe)
-            'jefe_grupo_id' => 'nullable|integer|exists:guardias,id',
+            // Validación para los jefes de turno (si existe)
+            'jefe_turno_id' => 'nullable|integer|exists:guardias,id',
         ]);
 
         DB::beginTransaction();
@@ -61,13 +80,13 @@ class OrdenServicioController extends Controller
                 Guardia::find($request->supervisor_id)->update(['estatus' => 'Asignado']);
             }
 
-            if($request->jefe_grupo_id){
+            if($request->jefe_turno_id){
                 OrdenServicioGuardia::create([
                     'orden_servicio_id' => $registro->id,
-                    'guardia_id' => $request->jefe_grupo_id,
+                    'guardia_id' => $request->jefe_turno_id,
                 ]);
 
-                Guardia::find($request->jefe_grupo_id)->update(['estatus' => 'Asignado']);
+                Guardia::find($request->jefe_turno_id)->update(['estatus' => 'Asignado']);
             }
 
             DB::commit();
@@ -96,6 +115,7 @@ class OrdenServicioController extends Controller
         $data = $request->validate([
             'venta_id' => 'required|exists:ventas,id',
             'domicilio_servicio' => 'required|string',
+            'codigo_orden_servicio' => 'required|string|unique:ordenes_servicios,codigo_orden_servicio,' . $id,
             'nombre_responsable_sitio' => 'required|string|max:100',
             'telefono_responsable_sitio' => 'required|string|max:15',
             'fecha_inicio' => 'required|date',
@@ -106,7 +126,7 @@ class OrdenServicioController extends Controller
             'guardias_id.*.value' => 'required|integer|exists:guardias,id',
 
             'supervisor_id' => 'nullable|integer|exists:guardias,id',
-            'jefe_grupo_id' => 'nullable|integer|exists:guardias,id',
+            'jefe_turno_id' => 'nullable|integer|exists:guardias,id',
         ]);
 
         DB::beginTransaction();
@@ -121,8 +141,8 @@ class OrdenServicioController extends Controller
                 $nuevosGuardias[] = $request->supervisor_id;
             }
 
-            if ($request->jefe_grupo_id) {
-                $nuevosGuardias[] = $request->jefe_grupo_id;
+            if ($request->jefe_turno_id) {
+                $nuevosGuardias[] = $request->jefe_turno_id;
             }
 
             // Obtenemos los actuales para comparar

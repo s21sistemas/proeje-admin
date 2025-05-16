@@ -2,7 +2,6 @@ import { useModal } from '../../hooks/useModal'
 import { formOptions } from '../../utils/formOrdenesCompra'
 import { AlertaCard } from '../AlertaCard'
 import { InputField } from '../InputField'
-import { SwitchInput } from '../SwitchInput'
 import { ButtonsModal } from './ButtonsModal'
 import { CancelButtonModal } from './CancelButtonModal'
 
@@ -20,8 +19,6 @@ export const FormOrdenesCompra = () => {
   return (
     <>
       <div className='grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6 md:grid-cols-2 mb-7'>
-        <SwitchInput value='impuesto' card='Impuesto' text='¿Pago + IVA?' />
-
         <div className='sm:col-span-6 md:col-span-2'>
           <AlertaCard text='Información de la orden de compra' />
         </div>

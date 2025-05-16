@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Cotizacion;
+use App\Models\SucursalEmpresa;
 use App\Models\Sucursal;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -16,7 +17,7 @@ class CotizacionFactory extends Factory
         $impuesto = $this->faker->boolean;
         $total = $impuesto ? $subtotal * 0.16 : $subtotal;
 
-        $jefe_grupo = $this->faker->randomElement(['SI', 'NO']);
+        $jefe_turno = $this->faker->randomElement(['SI', 'NO']);
         $supervisor = $this->faker->randomElement(['SI', 'NO']);
 
         return [
@@ -46,8 +47,8 @@ class CotizacionFactory extends Factory
             'precio_guardias_noche' => $this->faker->randomFloat(2, 400, 600),
             'cantidad_guardias' => $this->faker->numberBetween(1, 20),
 
-            'jefe_grupo' => $jefe_grupo,
-            'precio_jefe_grupo' => $jefe_grupo === 'SI' ? $this->faker->numberBetween(500, 1500) : 0,
+            'jefe_turno' => $jefe_turno,
+            'precio_jefe_turno' => $jefe_turno === 'SI' ? $this->faker->numberBetween(500, 1500) : 0,
             'supervisor' => $supervisor,
             'precio_supervisor' => $supervisor === 'SI' ? $this->faker->numberBetween(500, 1500) : 0,
 
@@ -62,6 +63,8 @@ class CotizacionFactory extends Factory
             'soporte_documental' => $this->faker->randomElement(['SI', 'NO']),
             'observaciones_soporte_documental' => $this->faker->paragraph(),
             'requisitos_pago_cliente' => $this->faker->paragraph(),
+
+            'sucursal_empresa_id' => SucursalEmpresa::inRandomOrder()->first()->id
         ];
     }
 }

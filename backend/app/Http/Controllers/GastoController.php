@@ -23,7 +23,7 @@ class GastoController extends Controller
             'banco_id' => 'required|exists:bancos,id',
             'concepto' => 'required|string',
             'metodo_pago' => 'required|in:Transferencia bancaria,Tarjeta de crédito/débito,Efectivo,Cheques',
-            'impuesto' => 'nullable|boolean',
+            'impuesto' => 'required|numeric',
             'subtotal' => 'required|numeric|min:1',
             'total' => 'required|numeric|min:1',
         ]);
@@ -68,7 +68,7 @@ class GastoController extends Controller
             'banco_id' => 'sometimes|exists:bancos,id',
             'concepto' => 'sometimes|string',
             'metodo_pago' => 'sometimes|in:Transferencia bancaria,Tarjeta de crédito/débito,Efectivo,Cheques',
-            'impuesto' => 'nullable|boolean',
+            'impuesto' => 'sometimes|numeric',
             'subtotal' => 'sometimes|numeric|min:1',
             'total' => 'sometimes|numeric|min:1',
         ]);

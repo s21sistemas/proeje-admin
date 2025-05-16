@@ -74,10 +74,15 @@ export const useCotizaciones = () => {
       }
     })
 
+    const newData = {
+      ...formData,
+      sucursal_empresa_id: formData.sucursal_empresa_id.value
+    }
+
     if (modalType === 'add') {
-      createMutation.mutate(formData)
+      createMutation.mutate(newData)
     } else if (modalType === 'edit') {
-      updateMutation.mutate(formData)
+      updateMutation.mutate(newData)
     }
   }
 

@@ -82,9 +82,7 @@ export const useOrdenesServicio = () => {
 
     const newData = {
       ...formData,
-      venta_id: formData.venta_id.value,
-      jefe_grupo_id: formData.jefe_grupo_id?.value || null,
-      supervisor_id: formData.supervisor_id?.value || null
+      venta_id: formData.venta_id.value
     }
 
     if (modalType === 'add') {

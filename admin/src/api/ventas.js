@@ -59,6 +59,18 @@ export const getVenta = async () => {
   }
 }
 
+export const getVentaById = async (id) => {
+  try {
+    const response = await apiClient.get('ventas/' + id)
+    const { data } = response
+
+    return data
+  } catch (error) {
+    console.error('Error al obetener el registro', error)
+    throw new Error(error.response.data.message)
+  }
+}
+
 export const getVentaOrdenServicio = async () => {
   try {
     const response = await apiClient.get('ventas-orden-servicio')
