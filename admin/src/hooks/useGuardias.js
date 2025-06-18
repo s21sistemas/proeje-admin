@@ -14,6 +14,7 @@ import { useEffect } from 'react'
 import { useState } from 'react'
 import estadosData from '../utils/estados.json'
 import estadosMunicipiosData from '../utils/municipios.json'
+import { guardiaSchema } from '../zod/schemas'
 
 export const useGuardias = () => {
   let toastId
@@ -108,6 +109,17 @@ export const useGuardias = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
+    // Validación con Zod
+    const parsed = guardiaSchema.safeParse(formData)
+
+    if (!parsed.success) {
+      const errors = parsed.error.flatten().fieldErrors
+      const firstError = Object.values(errors)[0][0]
+      toast.error(firstError)
+      return
+    }
+
     Swal.fire({
       title:
         '<h2 style="font-family: "sans-serif";">Guardando registro, por favor espere...</h2>',

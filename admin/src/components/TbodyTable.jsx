@@ -52,7 +52,8 @@ export const TbodyTable = ({ loading, columns, currentData, handleClass }) => {
                         'NO',
                         'Disponible',
                         'PENDIENTE',
-                        'Vencida'
+                        'Vencida',
+                        'Atendido'
                       ].includes(item[col.key]) ? (
                         <p>
                           <span

@@ -1,4 +1,4 @@
-import { apiClient } from './configAxios'
+import { apiClient, apiClientForm } from './configAxios'
 
 // Iniciar sesión
 export const loginRequest = async (credentials) => {
@@ -6,7 +6,6 @@ export const loginRequest = async (credentials) => {
     const response = await apiClient.post('login', credentials)
     return response.data
   } catch (error) {
-    console.error('Error al obetener el registro', error)
     throw new Error(error.response.data.message)
   }
 }
@@ -29,6 +28,23 @@ export const getUserProfile = async () => {
     return response.data
   } catch (error) {
     console.error('Error al obetener el registro', error)
+    throw new Error(error.response.data.message)
+  }
+}
+
+export const updateUserProfile = async (id, profileData) => {
+  try {
+    const formData = new FormData()
+    formData.append('_method', 'PUT')
+    formData.append('nombre_completo', profileData.nombre_completo)
+    if (profileData.foto instanceof File) {
+      formData.append('foto', profileData.foto)
+    }
+
+    const { data } = await apiClientForm.post(`/perfil/${id}`, formData)
+    return data
+  } catch (error) {
+    console.error('Error al actualizar el perfil', error)
     throw new Error(error.response.data.message)
   }
 }

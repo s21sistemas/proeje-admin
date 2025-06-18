@@ -33,8 +33,8 @@ export const Navbar = ({ toggleSidebar }) => {
           >
             <img
               className='h-8 w-8 rounded-full object-cover'
-              src={user?.file || img_default}
-              alt='Avatar'
+              src={user?.foto_url || img_default}
+              alt={user.nombre_completo}
             />
             <span className='ml-2 text-sm font-medium text-gray-900 hidden md:block'>
               {user ? user.nombre_completo : 'Usuario 1'}

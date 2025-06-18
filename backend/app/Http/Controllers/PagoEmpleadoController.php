@@ -50,7 +50,10 @@ class PagoEmpleadoController extends Controller
 
     public function update(Request $request, $id)
     {
-        $registro = PagoEmpleado::findOrFail($id);
+        $registro = PagoEmpleado::find($id);
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
 
         $data = $request->validate([
             'sueldo_base' => 'sometimes|numeric',
@@ -75,15 +78,23 @@ class PagoEmpleadoController extends Controller
 
     public function destroy($id)
     {
-        $registro = PagoEmpleado::findOrFail($id);
+        $registro = PagoEmpleado::find($id);
+
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
+
         $registro->delete();
 
-        return response()->json(['message' => 'Registro eliminado']);
+        return response()->json(['message' => 'Registro eliminado con éxito']);
     }
 
     public function generarPdf($id)
     {
-        $pago = PagoEmpleado::with('guardia')->findOrFail($id);
+        $pago = PagoEmpleado::with('guardia')->find($id);
+        if (!$pago) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
 
         $pdf = Pdf::loadView('pdf.pago_empleado', compact('pago'))
             ->setPaper('letter', 'portrait');

@@ -1,10 +1,24 @@
 export const formOptions = {
+  adminFields: [
+    {
+      required: true,
+      type: 'text',
+      label: 'Nombre del admin',
+      name: 'nombre_admin'
+    },
+    {
+      required: true,
+      type: 'text',
+      label: 'Rol',
+      name: 'nombre_rol'
+    }
+  ],
   generalFields: [
     {
       required: true,
       type: 'async',
-      label: 'Selecciona la cotizacion',
-      name: 'cotizacion_id'
+      label: 'Banco',
+      name: 'banco_id'
     },
     {
       required: true,
@@ -66,12 +80,18 @@ export const formOptions = {
     {
       required: true,
       type: 'number',
-      label: 'Total *',
+      label: 'Total',
       name: 'total'
     }
   ],
 
   actualFields: [
+    {
+      required: true,
+      type: 'text',
+      label: 'Banco',
+      name: 'banco_actualizado'
+    },
     {
       required: true,
       type: 'select',
@@ -132,7 +152,7 @@ export const formOptions = {
     {
       required: true,
       type: 'number',
-      label: 'Total *',
+      label: 'Total',
       name: 'total_actualizado'
     }
   ]

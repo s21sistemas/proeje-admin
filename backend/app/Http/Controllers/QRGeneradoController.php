@@ -78,7 +78,10 @@ class QRGeneradoController extends Controller
 
     public function generarPdf($ordenId)
     {
-        $orden = OrdenServicio::with(['venta.cotizacion.sucursal.cliente', 'ordenesServicioGuardias.guardia'])->findOrFail($ordenId);
+        $orden = OrdenServicio::with(['venta.cotizacion.sucursal.cliente', 'ordenesServicioGuardias.guardia'])->find($ordenId);
+        if (!$orden) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
 
         $qrs = QRGenerado::with('puntos_recorrido')->where('orden_servicio_id', $ordenId)->get();
 

@@ -33,7 +33,10 @@ class TiempoExtraController extends Controller
 
     public function update(Request $request, $id)
     {
-        $extra = TiempoExtra::findOrFail($id);
+        $extra = TiempoExtra::find($id);
+        if (!$extra) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
 
         $data = $request->validate([
             'horas' => 'sometimes|numeric|min:0.1',
@@ -49,9 +52,14 @@ class TiempoExtraController extends Controller
 
     public function destroy($id)
     {
-        $extra = TiempoExtra::findOrFail($id);
-        $extra->delete();
+        $registro = TiempoExtra::find($id);
 
-        return response()->json(['message' => 'Tiempo extra eliminado']);
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
+
+        $registro->delete();
+
+        return response()->json(['message' => 'Registro eliminado con éxito']);
     }
 }

@@ -16,7 +16,8 @@ import {
   getGuardias,
   getGuardiasBySucursal,
   getJefeBySucursal,
-  getSupervisorBySucursal
+  getSupervisorBySucursal,
+  getSupervisores
 } from '../api/guardias'
 import { getRol } from '../api/roles'
 import { getModulo } from '../api/modulos'
@@ -29,6 +30,7 @@ import { getVehiculo } from '../api/vehiculos'
 import { getOrdenServicio } from '../api/ordenes-servicios'
 import dayjs from 'dayjs'
 import { getEstadoCuentaGuardia } from '../api/reportes'
+import { getModuloConcepto } from '../api/modulo-conceptos'
 
 export const useModal = () => {
   const { pathname } = useLocation()
@@ -130,6 +132,29 @@ export const useModal = () => {
 
     setFormData('subtotal', subtotal)
     actualizarTotal(subtotal, descuentoPor, costoExtra)
+  }
+
+  const calcularTotalGastosCompras = ({
+    subtotal,
+    descuento_monto,
+    impuesto
+  }) => {
+    // Valores a float, por seguridad
+    const sub = toFloat(subtotal) || 0
+    const desc = toFloat(descuento_monto) || 0
+    const imp = toFloat(impuesto) || 0
+
+    // Evita que el descuento sea mayor que el subtotal
+    const subMenosDesc = Math.max(0, sub - desc)
+    const impuestoCalculado = subMenosDesc * (imp / 100)
+    const total = subMenosDesc + impuestoCalculado
+
+    return {
+      subtotal: sub,
+      descuento_monto: desc,
+      impuesto: imp,
+      total: total.toFixed(2)
+    }
   }
 
   const handleInputChange = async (e, actionMeta) => {
@@ -396,6 +421,34 @@ export const useModal = () => {
       const pagoFinal = bruto - retenciones
       setFormData('pago_final', pagoFinal.toFixed(2))
     }
+
+    if (name === 'supervisor_id') {
+      const nombre = value.nombre_completo
+      const email = value.email
+      const numeroEmpleado = value.numero_empleado
+
+      setFormData('nombre_completo', nombre)
+      setFormData('email', email)
+      setFormData('password', numeroEmpleado)
+    }
+
+    if (
+      ['/ordenes-compra', '/gastos'].includes(pathname) &&
+      ['subtotal', 'descuento_monto', 'impuesto'].includes(name)
+    ) {
+      const newSubtotal = name === 'subtotal' ? value : formData.subtotal
+      const newDescuento =
+        name === 'descuento_monto' ? value : formData.descuento_monto
+      const newImpuesto = name === 'impuesto' ? value : formData.impuesto
+
+      const resultado = calcularTotalGastosCompras({
+        subtotal: newSubtotal,
+        descuento_monto: newDescuento,
+        impuesto: newImpuesto
+      })
+
+      setFormData('total', resultado.total)
+    }
   }
 
   const handleCheckboxChange = async (e) => {
@@ -535,13 +588,24 @@ export const useModal = () => {
   }
 
   useEffect(() => {
-    setEstados(estadosData)
-    setEstadosMunicipios(estadosMunicipiosData)
+    if (
+      [
+        '/sucursales-empresa',
+        '/guardias',
+        '/clientes',
+        '/proveedores',
+        '/sucursales',
+        '/cotizaciones'
+      ].includes(pathname)
+    ) {
+      setEstados(estadosData)
+      setEstadosMunicipios(estadosMunicipiosData)
 
-    if (add) {
-      setFormData('pais', 'México')
+      if (add) {
+        setFormData('pais', 'México')
+      }
     }
-  }, [])
+  }, [add, pathname, setFormData])
 
   useEffect(() => {
     const estadoSeleccionado = formData.estado
@@ -566,10 +630,17 @@ export const useModal = () => {
     }))
   ]
 
-  const loadOptionsClientes = async () => {
+  const loadOptionsClientes = async (inputValue) => {
     try {
-      const response = await getCliente()
-      return response.map((data) => ({
+      if (!loadOptionsClientes.cachedData) {
+        loadOptionsClientes.cachedData = await getCliente()
+      }
+
+      const filteredData = loadOptionsClientes.cachedData.filter((g) =>
+        g.nombre_empresa.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
         label: data.nombre_empresa
       }))
@@ -579,10 +650,17 @@ export const useModal = () => {
     }
   }
 
-  const loadOptionsBancos = async () => {
+  const loadOptionsBancos = async (inputValue) => {
     try {
-      const response = await getBanco()
-      return response.map((data) => ({
+      if (!loadOptionsBancos.cachedData) {
+        loadOptionsBancos.cachedData = await getBanco()
+      }
+
+      const filteredData = loadOptionsBancos.cachedData.filter((g) =>
+        g.nombre.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
         label: data.nombre
       }))
@@ -592,10 +670,17 @@ export const useModal = () => {
     }
   }
 
-  const loadOptionsProveedores = async () => {
+  const loadOptionsProveedores = async (inputValue) => {
     try {
-      const response = await getProveedor()
-      return response.map((data) => ({
+      if (!loadOptionsProveedores.cachedData) {
+        loadOptionsProveedores.cachedData = await getProveedor()
+      }
+
+      const filteredData = loadOptionsProveedores.cachedData.filter((g) =>
+        g.nombre_empresa.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
         label: data.nombre_empresa
       }))
@@ -605,10 +690,17 @@ export const useModal = () => {
     }
   }
 
-  const loadOptionsArticulos = async () => {
+  const loadOptionsArticulos = async (inputValue) => {
     try {
-      const response = await getArticulo()
-      return response.map((data) => ({
+      if (!loadOptionsArticulos.cachedData) {
+        loadOptionsArticulos.cachedData = await getArticulo()
+      }
+
+      const filteredData = loadOptionsArticulos.cachedData.filter((g) =>
+        g.nombre.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
         label: data.nombre
       }))
@@ -618,10 +710,17 @@ export const useModal = () => {
     }
   }
 
-  const loadOptionsCotizaciones = async () => {
+  const loadOptionsCotizaciones = async (inputValue) => {
     try {
-      const response = await getCotizacion()
-      return response.map((data) => ({
+      if (!loadOptionsCotizaciones.cachedData) {
+        loadOptionsCotizaciones.cachedData = await getCotizacion()
+      }
+
+      const filteredData = loadOptionsCotizaciones.cachedData.filter((g) =>
+        g.nombre_empresa.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
         label: data.nombre_empresa
       }))
@@ -631,10 +730,21 @@ export const useModal = () => {
     }
   }
 
-  const loadOptionsVentas = async () => {
+  const loadOptionsVentas = async (inputValue) => {
     try {
-      const response = await getVentaOrdenServicio()
-      return response.map((data) => ({
+      if (!loadOptionsVentas.cachedData) {
+        loadOptionsVentas.cachedData = await getVentaOrdenServicio()
+      }
+
+      const filteredData = loadOptionsVentas.cachedData.filter(
+        (data) =>
+          data.nombre_empresa
+            .toLowerCase()
+            .includes(inputValue.toLowerCase()) ||
+          data.numero_factura.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
         label: `${data.nombre_empresa} (${data.numero_factura})`,
         direccion: data.direccion,
@@ -648,10 +758,17 @@ export const useModal = () => {
     }
   }
 
-  const loadOptionsModuloDescuento = async () => {
+  const loadOptionsModuloConcepto = async (inputValue) => {
     try {
-      const response = await getModuloDescuento()
-      return response.map((data) => ({
+      if (!loadOptionsModuloConcepto.cachedData) {
+        loadOptionsModuloConcepto.cachedData = await getModuloConcepto()
+      }
+
+      const filteredData = loadOptionsModuloConcepto.cachedData.filter((g) =>
+        g.nombre.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
         label: data.nombre
       }))
@@ -661,10 +778,17 @@ export const useModal = () => {
     }
   }
 
-  const loadOptionsModuloPrestamo = async () => {
+  const loadOptionsModuloDescuento = async (inputValue) => {
     try {
-      const response = await getModuloPrestamo()
-      return response.map((data) => ({
+      if (!loadOptionsModuloDescuento.cachedData) {
+        loadOptionsModuloDescuento.cachedData = await getModuloDescuento()
+      }
+
+      const filteredData = loadOptionsModuloDescuento.cachedData.filter((g) =>
+        g.nombre.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
         label: data.nombre
       }))
@@ -674,12 +798,19 @@ export const useModal = () => {
     }
   }
 
-  const loadOptionsTodosGuardias = async () => {
+  const loadOptionsModuloPrestamo = async (inputValue) => {
     try {
-      const response = await getGuardias()
-      return response.map((data) => ({
+      if (!loadOptionsModuloPrestamo.cachedData) {
+        loadOptionsModuloPrestamo.cachedData = await getModuloPrestamo()
+      }
+
+      const filteredData = loadOptionsModuloPrestamo.cachedData.filter((g) =>
+        g.nombre.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
-        label: data.nombre_completo
+        label: data.nombre
       }))
     } catch (error) {
       console.error('Error cargando datos:', error)
@@ -687,14 +818,72 @@ export const useModal = () => {
     }
   }
 
-  const loadOptionsGuardiasBySucursal = async () => {
+  const loadOptionsTodosGuardias = async (inputValue) => {
+    try {
+      if (!loadOptionsTodosGuardias.cachedData) {
+        loadOptionsTodosGuardias.cachedData = await getGuardias()
+      }
+
+      const filteredData = loadOptionsTodosGuardias.cachedData.filter(
+        (g) =>
+          g.nombre_completo.toLowerCase().includes(inputValue.toLowerCase()) ||
+          g.numero_empleado.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
+        value: data.id,
+        label: `${data.nombre_completo} (${data.numero_empleado})`
+      }))
+    } catch (error) {
+      console.error('Error cargando datos:', error)
+      return []
+    }
+  }
+
+  const loadOptionsSupervisores = async (inputValue) => {
+    try {
+      if (!loadOptionsSupervisores.cachedData) {
+        loadOptionsSupervisores.cachedData = await getSupervisores()
+      }
+
+      const filteredData = loadOptionsSupervisores.cachedData.filter(
+        (g) =>
+          g.nombre_completo.toLowerCase().includes(inputValue.toLowerCase()) ||
+          g.numero_empleado.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
+        value: data.id,
+        label: `${data.nombre_completo} (${data.numero_empleado})`,
+        numero_empleado: data.numero_empleado,
+        email: data.correo,
+        nombre_completo: data.nombre_completo
+      }))
+    } catch (error) {
+      console.error('Error cargando datos:', error)
+      return []
+    }
+  }
+
+  const loadOptionsGuardiasBySucursal = async (inputValue) => {
     if (!sucursalGuardiasId) return []
 
     try {
-      const guardias = await getGuardiasBySucursal(sucursalGuardiasId)
-      return guardias.map((g) => ({
+      if (!loadOptionsGuardiasBySucursal.cachedData) {
+        loadOptionsGuardiasBySucursal.cachedData = await getGuardiasBySucursal(
+          sucursalGuardiasId
+        )
+      }
+
+      const filteredData = loadOptionsGuardiasBySucursal.cachedData.filter(
+        (g) =>
+          g.nombre_completo.toLowerCase().includes(inputValue.toLowerCase()) ||
+          g.numero_empleado.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((g) => ({
         value: g.id,
-        label: g.nombre_completo
+        label: `${g.nombre_completo} (${g.numero_empleado})`
       }))
     } catch (error) {
       console.error('Error al cargar guardias por sucursal:', error)
@@ -702,11 +891,21 @@ export const useModal = () => {
     }
   }
 
-  const loadOptionsPrestamos = async () => {
+  const loadOptionsPrestamos = async (inputValue) => {
     try {
-      const response = await getPrestamoPendiente()
+      if (!loadOptionsPrestamos.cachedData) {
+        loadOptionsPrestamos.cachedData = await getPrestamoPendiente()
+      }
 
-      return response.map((data) => ({
+      const filteredData = loadOptionsPrestamos.cachedData.filter(
+        (data) =>
+          data.nombre.toLowerCase().includes(inputValue.toLowerCase()) ||
+          data.monto_total_format
+            .toLowerCase()
+            .includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
         label: `${data.nombre} (${data.monto_total_format})`
       }))
@@ -716,11 +915,17 @@ export const useModal = () => {
     }
   }
 
-  const loadOptionsSucursalesEmpresa = async () => {
+  const loadOptionsSucursalesEmpresa = async (inputValue) => {
     try {
-      const response = await getSucursalEmpresa()
+      if (!loadOptionsSucursalesEmpresa.cachedData) {
+        loadOptionsSucursalesEmpresa.cachedData = await getSucursalEmpresa()
+      }
 
-      return response.map((data) => ({
+      const filteredData = loadOptionsSucursalesEmpresa.cachedData.filter((g) =>
+        g.nombre_sucursal.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
         label: data.nombre_sucursal
       }))
@@ -730,10 +935,17 @@ export const useModal = () => {
     }
   }
 
-  const loadOptionsRoles = async () => {
+  const loadOptionsRoles = async (inputValue) => {
     try {
-      const response = await getRol()
-      return response.map((data) => ({
+      if (!loadOptionsRoles.cachedData) {
+        loadOptionsRoles.cachedData = await getRol()
+      }
+
+      const filteredData = loadOptionsRoles.cachedData.filter((g) =>
+        g.nombre.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
         label: data.nombre
       }))
@@ -743,10 +955,17 @@ export const useModal = () => {
     }
   }
 
-  const loadOptionsModulos = async () => {
+  const loadOptionsModulos = async (inputValue) => {
     try {
-      const response = await getModulo()
-      return response.map((data) => ({
+      if (!loadOptionsModulos.cachedData) {
+        loadOptionsModulos.cachedData = await getModulo()
+      }
+
+      const filteredData = loadOptionsModulos.cachedData.filter((g) =>
+        g.nombre.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
         label: data.nombre
       }))
@@ -756,11 +975,19 @@ export const useModal = () => {
     }
   }
 
-  const loadOptionsVehiculos = async () => {
+  const loadOptionsVehiculos = async (inputValue) => {
     try {
-      const response = await getVehiculo()
+      if (!loadOptionsVehiculos.cachedData) {
+        loadOptionsVehiculos.cachedData = await getVehiculo()
+      }
 
-      return response.map((data) => ({
+      const filteredData = loadOptionsVehiculos.cachedData.filter(
+        (data) =>
+          data.tipo_vehiculo.toLowerCase().includes(inputValue.toLowerCase()) ||
+          data.placas.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
         label: `${data.tipo_vehiculo} (${data.placas})`
       }))
@@ -770,11 +997,17 @@ export const useModal = () => {
     }
   }
 
-  const loadOptionsOrdenServicio = async () => {
+  const loadOptionsOrdenServicio = async (inputValue) => {
     try {
-      const response = await getOrdenServicio()
+      if (!loadOptionsOrdenServicio.cachedData) {
+        loadOptionsOrdenServicio.cachedData = await getOrdenServicio()
+      }
 
-      return response.map((data) => ({
+      const filteredData = loadOptionsOrdenServicio.cachedData.filter((g) =>
+        g.codigo_orden_servicio.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
         label: data.codigo_orden_servicio
       }))
@@ -840,6 +1073,7 @@ export const useModal = () => {
     loadOptionsTodosGuardias,
     loadOptionsRoles,
     loadOptionsModulos,
+    loadOptionsModuloConcepto,
     loadOptionsPrestamos,
     loadOptionsSucursalesEmpresa,
     loadOptionsGuardiasBySucursal,
@@ -847,6 +1081,7 @@ export const useModal = () => {
     loadOptionsModuloPrestamo,
     loadOptionsVehiculos,
     loadOptionsOrdenServicio,
+    loadOptionsSupervisores,
     selectOptions,
     articulosDisponibles,
     selectSupervisorBySucursal,

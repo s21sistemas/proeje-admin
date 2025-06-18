@@ -22,7 +22,7 @@ export const formOptions = {
       required: true,
       type: 'email',
       label: 'Correo *',
-      name: 'correo'
+      name: 'correo_contacto'
     }
   ],
 

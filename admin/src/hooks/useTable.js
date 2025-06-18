@@ -48,7 +48,9 @@ export const useTable = () => {
   const handleClass = (item, columnKey) => {
     const estatus = item[columnKey].toLowerCase()
 
-    if (['pagada', 'si', 'disponible', 'pagado'].includes(estatus)) {
+    if (
+      ['pagada', 'si', 'disponible', 'pagado', 'atendido'].includes(estatus)
+    ) {
       return 'bg-green-700'
     } else if (['pendiente', 'no'].includes(estatus)) {
       return 'bg-red-600/80'

@@ -30,6 +30,8 @@ class OrdenCompraController extends Controller
             'cantidad_articulo' => 'required|integer',
             'precio_articulo' => 'required|numeric|min:1',
             'metodo_pago' => 'required|in:Transferencia bancaria,Tarjeta de crédito/débito,Efectivo,Cheques',
+            'referencia' => 'nullable|string',
+            'descuento_monto' => 'required|numeric',
             'impuesto' => 'required|numeric',
             'subtotal' => 'required|numeric|min:1',
             'total' => 'required|numeric|min:1',
@@ -68,6 +70,8 @@ class OrdenCompraController extends Controller
             'cantidad_articulo' => 'sometimes|integer',
             'precio_articulo' => 'sometimes|numeric|min:1',
             'metodo_pago' => 'sometimes|in:Transferencia bancaria,Tarjeta de crédito/débito,Efectivo,Cheques',
+            'referencia' => 'nullable|string',
+            'descuento_monto' => 'sometimes|numeric',
             'impuesto' => 'sometimes|numeric',
             'subtotal' => 'sometimes|numeric|min:1',
             'total' => 'sometimes|numeric|min:1',
@@ -89,15 +93,29 @@ class OrdenCompraController extends Controller
                 ]);
             }
 
-            MovimientoBancario::create([
+            $referencia = 'Pago de orden de compra #' . ($data['numero_oc'] ?? $registro->numero_oc);
+            if($data['metodo_pago'] === 'Transferencia bancaria' || $data['metodo_pago'] === 'Tarjeta de crédito/débito'){
+                $referencia = $data['referencia'];
+            }else{
+                $data['referencia'] = null;
+            }
+
+            $movimiento = $registro->movimientosBancarios()->first();
+                $datosMovimiento = [
                 'banco_id'        => $data['banco_id'] ?? $registro->banco_id,
-                'fecha'   => Carbon::now()->format('Y-m-d'),
+                'fecha'           => Carbon::now()->format('Y-m-d'),
                 'tipo_movimiento' => 'Egreso',
                 'concepto'        => 'Compra de artículos',
-                'referencia'      => 'Pago de orden de compra #' . ($data['numero_oc'] ?? $registro->numero_oc),
+                'referencia'      => $referencia,
                 'monto'           => $data['total'] ?? $registro->total,
                 'metodo_pago'     => $data['metodo_pago'] ?? $registro->metodo_pago,
-            ]);
+            ];
+
+            if ($movimiento) {
+                $movimiento->update($datosMovimiento);
+            } else {
+                $registro->movimientosBancarios()->create($datosMovimiento);
+            }
         }
 
         $registro->update($data);

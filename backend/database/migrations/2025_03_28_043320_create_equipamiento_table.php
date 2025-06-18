@@ -16,12 +16,12 @@ return new class extends Migration
         Schema::create('equipamiento', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('restrict');
             $table->date('fecha_entrega');
             $table->date('fecha_devuelto')->nullable();
             $table->enum('devuelto', ['SI', 'NO'])->default('NO');
 
-            $table->foreignId('vehiculo_id')->constrained('vehiculos')->onDelete('cascade');
+            $table->foreignId('vehiculo_id')->constrained('vehiculos')->onDelete('restrict');
             $table->boolean('fornitura')->default(false);
             $table->boolean('celular')->default(false);
             $table->boolean('radio')->default(false);

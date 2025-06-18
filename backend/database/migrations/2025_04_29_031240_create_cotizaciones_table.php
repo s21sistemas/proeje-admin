@@ -32,7 +32,7 @@ return new class extends Migration
             $table->string('correo_contacto', 100)->nullable()->unique();
 
             // Condiciones comerciales
-            $table->integer('credito_dias');
+            $table->integer('credito_dias')->default(0);
             $table->decimal('descuento_porcentaje', 10, 2)->nullable();
 
             $table->string('rfc', 13)->nullable();
@@ -61,14 +61,14 @@ return new class extends Migration
             $table->decimal('impuesto', 10, 2)->default(0);
             $table->decimal('total', 10, 2);
             $table->enum('aceptada', ['SI', 'NO', 'PENDIENTE'])->default('PENDIENTE');
-            $table->foreignId('sucursal_id')->nullable()->constrained('sucursales')->onDelete('cascade');
+            $table->foreignId('sucursal_id')->nullable()->constrained('sucursales')->onDelete('restrict');
 
             // Otra información
             $table->enum('soporte_documental', ['SI', 'NO'])->default('NO');
             $table->mediumText('observaciones_soporte_documental')->nullable();
             $table->mediumText('requisitos_pago_cliente')->nullable();
 
-            $table->foreignId('sucursal_empresa_id')->constrained('sucursales_empresa')->onDelete('cascade');
+            $table->foreignId('sucursal_empresa_id')->constrained('sucursales_empresa')->onDelete('restrict');
 
             $table->timestamps();
         });

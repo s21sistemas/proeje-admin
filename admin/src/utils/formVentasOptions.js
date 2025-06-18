@@ -47,6 +47,12 @@ export const formOptions = {
     },
     {
       required: true,
+      type: 'async',
+      label: 'Selecciona el banco *',
+      name: 'banco_id'
+    },
+    {
+      required: true,
       type: 'select',
       label: 'Método de pago *',
       name: 'metodo_pago',
@@ -60,6 +66,15 @@ export const formOptions = {
         { label: 'Efectivo', value: 'Efectivo' },
         { label: 'Cheques', value: 'Cheques' }
       ]
-    }
+    },
+    {
+      required: true,
+      type: 'text',
+      label: 'Referencia *',
+      name: 'referencia',
+      condition: (metodo) =>
+        metodo === 'Transferencia bancaria' ||
+        metodo === 'Tarjeta de crédito/débito'
+    },
   ]
 }

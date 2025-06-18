@@ -38,7 +38,7 @@ class GuardiaFactory extends Factory
             'contacto_emergencia' => $this->faker->name,
             'rango' => $this->faker->randomElement(['Guardia', 'Supervisor', 'Jefe de turno']),
 
-            'foto' => $this->faker->imageUrl(),
+            'foto' => 'default.png',
             'curp' => 'curp.pdf',
             'ine' => 'ine.pdf',
             'acta_nacimiento' => 'acta_nacimiento.pdf',

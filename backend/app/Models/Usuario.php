@@ -15,9 +15,11 @@ class Usuario extends Authenticatable
 
     protected $table = 'usuarios';
 
-    protected $fillable = ['nombre_completo', 'email', 'password', 'rol_id'];
+    protected $fillable = ['nombre_completo', 'email', 'password', 'rol_id', 'guardia_id', 'foto'];
 
     protected $hidden = ['rol_id', 'password'];
+
+    protected $appends = ['foto_url'];
 
     public function setContrasenaAttribute($value)
     {
@@ -27,5 +29,14 @@ class Usuario extends Authenticatable
     public function rol()
     {
         return $this->belongsTo(Rol::class, 'rol_id');
+    }
+
+    public function getFotoUrlAttribute()
+    {
+        if (!$this->foto) {
+            return;
+        }
+
+        return asset("storage/fotos_usuarios/{$this->foto}");
     }
 }

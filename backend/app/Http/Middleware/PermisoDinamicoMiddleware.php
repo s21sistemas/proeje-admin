@@ -19,8 +19,10 @@ class PermisoDinamicoMiddleware
 
         // Mapa de rutas auxiliares a módulos reales
         $mapAliasModulo = [
-            'count-adminpage'                => 'guardias',
+            'count-adminpage'                  => 'guardias',
             'guardias-asignado'                => 'guardias',
+            'supervisores'                     => 'guardias',
+            'cancelar-venta'                   => 'guardias',
             'guardias-sucursal'                => 'guardias',
             'supervisores-sucursal'            => 'guardias',
             'jefes-sucursal'                   => 'guardias',
@@ -29,10 +31,13 @@ class PermisoDinamicoMiddleware
             'generar-estadocuenta-banco'       => 'guardias',
             'generar-estadocuenta-cliente'     => 'guardias',
             'generar-estadocuenta-proveedor'   => 'guardias',
+            'generar-horastrabajadas-guardia'   => 'guardias',
             'sucursales-cliente'               => 'guardias',
             'articulos-asignar'                => 'articulos',
             'vehiculos-disponibles'            => 'vehiculos',
             'ventas-orden-servicio'            => 'ventas',
+            'ventas-ingresos-mensuales'        => 'ventas',
+            'ventas-egresos-mensuales'         => 'ventas',
             'almacen-disponibles'              => 'almacen',
             'equipamiento-completo'            => 'guardias',
             'equipo-disponible/{articulo_id}'  => 'clientes',

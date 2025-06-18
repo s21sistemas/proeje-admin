@@ -1,6 +1,18 @@
 import { Edit, X } from 'lucide-react'
+import { ProfileView } from '../components/ProfileView'
+import { useProfile } from '../hooks/useProfile'
+import { FormProfile } from '../components/FormProfile'
 
 export default function PerfilPage() {
+  const {
+    handleSubmit,
+    handleChange,
+    handleImageChange,
+    handleEditToggle,
+    isEditing,
+    formData
+  } = useProfile()
+
   return (
     <div className='max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden'>
       <div className='p-6'>
@@ -8,8 +20,12 @@ export default function PerfilPage() {
           <h2 className='text-2xl font-bold text-gray-800'>
             Perfil del usuario
           </h2>
-          <button className='flex items-center gap-1 text-sm font-medium rounded-md px-3 py-1.5 bg-primary text-white hover:bg-primary/90'>
-            {/* {isEditing ? (
+          <button
+            className='cursor-pointer flex items-center gap-1 text-sm font-medium rounded-md px-3 py-1.5 bg-primary text-white hover:bg-primary/90'
+            onClick={handleEditToggle}
+            type='button'
+          >
+            {isEditing ? (
               <>
                 <X size={16} />
                 Cancelar
@@ -19,20 +35,20 @@ export default function PerfilPage() {
                 <Edit size={16} />
                 Editar
               </>
-            )} */}
+            )}
           </button>
         </div>
 
-        {/* {isEditing ? (
+        {isEditing ? (
           <FormProfile
             handleSubmit={handleSubmit}
-            handlePhotoChange={handlePhotoChange}
             handleChange={handleChange}
+            handleImageChange={handleImageChange}
             formData={formData}
           />
         ) : (
-          <ProfileView userData={userData} />
-        )} */}
+          <ProfileView />
+        )}
       </div>
     </div>
   )

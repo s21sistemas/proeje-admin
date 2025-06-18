@@ -1,6 +1,9 @@
+import { useModalStore } from '../store/useModalStore'
 import { usePermisosStore } from '../store/usePermisosStore'
 
 export const usePermisos = () => {
+  const setFormData = useModalStore((state) => state.setFormData)
+
   const modulosSeleccionados = usePermisosStore(
     (state) => state.modulosSeleccionados
   )
@@ -14,6 +17,7 @@ export const usePermisos = () => {
   const getPermisoValue = usePermisosStore((state) => state.getPermisoValue)
 
   const handleChange = (selectedOptions) => {
+    setFormData('modulos_id', selectedOptions)
     setModulosSeleccionados(selectedOptions)
   }
 

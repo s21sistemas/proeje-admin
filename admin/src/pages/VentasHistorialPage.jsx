@@ -5,11 +5,12 @@ import { useModal } from '../hooks/useModal'
 import { useVentasHistorial } from '../hooks/useVentasHistorial'
 
 const columns = [
+  { key: 'nombre', name: 'Admin que modifico' },
   { key: 'venta_id', name: 'ID venta' },
   { key: 'cotizacion', name: 'ID cotización' },
   { key: 'numero_factura', name: 'Número factura' },
-  { key: 'fecha_emision_format', name: 'Fecha emisión' },
   { key: 'total_format', name: 'Total' },
+  { key: 'fecha_modificacion', name: 'Fecha modificación' },
   { key: 'accion', name: 'Acción' }
 ]
 

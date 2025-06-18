@@ -12,12 +12,17 @@ class MovimientoBancario extends Model
 
     protected $table = 'movimientos_bancarios';
 
-    protected $fillable = ['banco_id', 'tipo_movimiento', 'concepto', 'fecha', 'referencia', 'monto', 'metodo_pago'];
+    protected $fillable = ['banco_id', 'tipo_movimiento', 'concepto', 'fecha', 'referencia', 'monto', 'metodo_pago', 'origen_id', 'origen_type'];
 
     protected $hidden = ['banco_id'];
 
     public function banco()
     {
         return $this->belongsTo(Banco::class, 'banco_id')->select(['id', 'nombre']);
+    }
+
+    public function origen()
+    {
+        return $this->morphTo();
     }
 }

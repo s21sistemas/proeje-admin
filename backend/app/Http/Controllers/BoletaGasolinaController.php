@@ -34,7 +34,10 @@ class BoletaGasolinaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $registro = BoletaGasolina::findOrFail($id);
+        $registro = BoletaGasolina::find($id);
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
 
         $data = $request->validate([
             // 'banco_id' => 'sometimes|exists:bancos,id',
@@ -51,9 +54,14 @@ class BoletaGasolinaController extends Controller
 
     public function destroy($id)
     {
-        $registro = BoletaGasolina::findOrFail($id);
+        $registro = BoletaGasolina::find($id);
+
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
+
         $registro->delete();
 
-        return response()->json(['message' => 'Registro eliminado']);
+        return response()->json(['message' => 'Registro eliminado con éxito']);
     }
 }

@@ -6,7 +6,13 @@ import { ButtonsModal } from './ButtonsModal'
 import { CancelButtonModal } from './CancelButtonModal'
 
 export const FormGastos = () => {
-  const { view, formData, handleInputChange, loadOptionsBancos } = useModal()
+  const {
+    view,
+    formData,
+    handleInputChange,
+    loadOptionsBancos,
+    loadOptionsModuloConcepto
+  } = useModal()
 
   return (
     <>
@@ -16,22 +22,27 @@ export const FormGastos = () => {
         </div>
 
         {formOptions.generalFields.map(
-          ({ type, label, name, required, step, opcSelect }) => (
-            <InputField
-              key={name}
-              type={type}
-              label={label}
-              name={name}
-              step={step}
-              required={required}
-              value={formData[name] || ''}
-              opcSelect={opcSelect}
-              loadOptions={loadOptionsBancos}
-              onChange={handleInputChange}
-              disabled={view}
-              classInput='md:col-span-1'
-            />
-          )
+          ({ type, label, name, required, step, opcSelect, condition }) =>
+            (!condition || condition(formData.metodo_pago)) && (
+              <InputField
+                key={name}
+                type={type}
+                label={label}
+                name={name}
+                step={step}
+                required={required}
+                value={formData[name] || ''}
+                opcSelect={opcSelect}
+                loadOptions={
+                  name === 'banco_id'
+                    ? loadOptionsBancos
+                    : loadOptionsModuloConcepto
+                }
+                onChange={handleInputChange}
+                disabled={view}
+                classInput='md:col-span-1'
+              />
+            )
         )}
       </div>
       <hr className='text-gray-300' />

@@ -33,7 +33,10 @@ class VacacionController extends Controller
 
     public function update(Request $request, $id)
     {
-        $vacacion = Vacacion::findOrFail($id);
+        $vacacion = Vacacion::find($id);
+        if (!$vacacion) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
 
         $data = $request->validate([
             'fecha_inicio' => 'sometimes|date',
@@ -50,9 +53,14 @@ class VacacionController extends Controller
 
     public function destroy($id)
     {
-        $vacacion = Vacacion::findOrFail($id);
-        $vacacion->delete();
+        $registro = Vacacion::find($id);
 
-        return response()->json(['message' => 'Vacación eliminada']);
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
+
+        $registro->delete();
+
+        return response()->json(['message' => 'Registro eliminado con éxito']);
     }
 }

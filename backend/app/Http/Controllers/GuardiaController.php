@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Guardia;
+use App\Models\Usuario;
 
 class GuardiaController extends Controller
 {
@@ -105,6 +106,14 @@ class GuardiaController extends Controller
         return response()->json($registro);
     }
 
+    // Obtener supervisores
+    public function getSupervisores()
+    {
+        $supervisores = Guardia::where('rango', 'Supervisor')->where('eliminado', false)->get();
+
+        return response()->json($supervisores);
+    }
+
     //  * Crear un nuevo registro.
     public function store(Request $request)
     {
@@ -190,6 +199,17 @@ class GuardiaController extends Controller
         }
 
         $registro = Guardia::create($data);
+
+        // Si es supervisor se guarda el usuario en la tabla de usuarios
+        if ($data['rango'] === 'Supervisor') {
+            $usuario = new Usuario();
+            $usuario->nombre_completo = $data['nombre'] . ' ' . $data['apellido_p'] . ' ' . $data['apellido_m'];
+            $usuario->email = $data['correo'];
+            $usuario->password = bcrypt($data['numero_empleado']);
+            $usuario->rol_id = 2;
+            $usuario->guardia_id = $registro->id;
+            $usuario->save();
+        }
         return response()->json(['message' => 'Registro guardado'], 201);
     }
 
@@ -393,10 +413,12 @@ class GuardiaController extends Controller
     // * Función para eliminar una foto
     private function eliminarFoto($nombreArchivo)
     {
-        $ruta = storage_path("app/public/fotos_guardias/{$nombreArchivo}");
+        if($nombreArchivo !== 'default.png'){
+            $ruta = storage_path("app/public/fotos_guardias/{$nombreArchivo}");
 
-        if (file_exists($ruta)) {
-            unlink($ruta);
+            if (file_exists($ruta)) {
+                unlink($ruta);
+            }
         }
     }
 

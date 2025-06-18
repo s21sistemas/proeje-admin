@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Gasto;
 use App\Models\Banco;
+use App\Models\ModuloConcepto;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class GastoFactory extends Factory
@@ -18,7 +19,7 @@ class GastoFactory extends Factory
 
         return [
             'banco_id' => Banco::factory(),
-            'concepto' => $this->faker->sentence,
+            'modulo_concepto_id' => ModuloConcepto::factory(),
             'metodo_pago' => $this->faker->randomElement(['Transferencia bancaria', 'Tarjeta de crédito/débito', 'Efectivo', 'Cheques']),
             'impuesto' => $impuesto,
             'subtotal' => $subtotal,

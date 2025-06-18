@@ -28,6 +28,12 @@ class OrdenServicio extends Model
 
     public function guardias()
     {
-        return $this->belongsToMany(Guardia::class, 'orden_servicio_guardias');
+        return $this->belongsToMany(Guardia::class, 'orden_servicio_guardias')->select([
+            'guardias.id',
+            'guardias.nombre',
+            'guardias.apellido_p',
+            'guardias.apellido_m',
+            'orden_servicio_guardias.orden_servicio_id'
+        ]);
     }
 }

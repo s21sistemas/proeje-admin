@@ -1,9 +1,18 @@
-import { apiClient } from './configAxios'
+import { apiClient, apiClientForm } from './configAxios'
 
 // Crear un registro
 export const createUsuario = async (data) => {
   try {
-    const response = await apiClient.post('usuarios', data)
+    const formData = new FormData()
+    formData.append('nombre_completo', data.nombre_completo)
+    formData.append('rol_id', data.rol_id)
+    formData.append('email', data.email)
+    formData.append('password', data.password)
+    if (data.foto instanceof File) {
+      formData.append('foto', data.foto)
+    }
+
+    const response = await apiClientForm.post('usuarios', formData)
     return response.data
   } catch (error) {
     console.error('Error al agregar registro:', error)
@@ -32,7 +41,19 @@ export const updateUsuario = async (data) => {
   try {
     const { id } = data
 
-    const response = await apiClient.put(`usuarios/${id}`, data)
+    const formData = new FormData()
+    formData.append('_method', 'PUT')
+    formData.append('nombre_completo', data.nombre_completo)
+    formData.append('rol_id', data.rol_id)
+    formData.append('email', data.email)
+    if (data?.password) {
+      formData.append('password', data.password)
+    }
+    if (data.foto instanceof File) {
+      formData.append('foto', data.foto)
+    }
+
+    const response = await apiClientForm.post(`usuarios/${id}`, formData)
     return response.data
   } catch (error) {
     console.error('Error al actualizar registro:', error)

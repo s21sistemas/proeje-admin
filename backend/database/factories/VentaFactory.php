@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Cotizacion;
+use App\Models\Banco;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class VentaFactory extends Factory
@@ -15,6 +16,7 @@ class VentaFactory extends Factory
 
         return [
             'cotizacion_id' => Cotizacion::factory(),
+            'banco_id' => Banco::factory(),
             'numero_factura' => $this->faker->unique()->bothify('FAC-####'),
             'fecha_emision' => $fechaEmision->format('Y-m-d'),
             'fecha_vencimiento' => $fechaVencimiento->format('Y-m-d'),

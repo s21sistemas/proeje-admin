@@ -32,7 +32,10 @@ class FaltaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $falta = Falta::findOrFail($id);
+        $falta = Falta::find($id);
+        if (!$falta) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
 
         $data = $request->validate([
             'cantidad_faltas' => 'sometimes|integer|min:1',
@@ -47,9 +50,14 @@ class FaltaController extends Controller
 
     public function destroy($id)
     {
-        $falta = Falta::findOrFail($id);
-        $falta->delete();
+        $registro = Falta::find($id);
 
-        return response()->json(['message' => 'Falta eliminada']);
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
+
+        $registro->delete();
+
+        return response()->json(['message' => 'Registro eliminado con éxito']);
     }
 }

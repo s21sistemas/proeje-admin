@@ -68,7 +68,10 @@ class RolController extends Controller
         DB::beginTransaction();
 
         try {
-            $rol = Rol::findOrFail($id);
+            $rol = Rol::find($id);
+            if (!$rol) {
+                return response()->json(['error' => 'Registro no encontrado'], 404);
+            }
 
             $rol->update([
                 'nombre' => $request->nombre,

@@ -8,6 +8,7 @@ import {
   removeCliente,
   updateCliente
 } from '../api/clientes'
+import { clienteSchema } from '../zod/schemas'
 
 export const useClientes = () => {
   const modalType = useModalStore((state) => state.modalType)
@@ -62,6 +63,17 @@ export const useClientes = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
+    // Validación con Zod
+    const parsed = clienteSchema.safeParse(formData)
+
+    if (!parsed.success) {
+      const errors = parsed.error.flatten().fieldErrors
+      const firstError = Object.values(errors)[0][0]
+      toast.error(firstError)
+      return
+    }
+
     Swal.fire({
       title:
         '<h2 style="font-family: "sans-serif";">Guardando registro, por favor espere...</h2>',

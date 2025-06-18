@@ -33,7 +33,10 @@ class IncapacidadController extends Controller
 
     public function update(Request $request, $id)
     {
-        $incapacidad = Incapacidad::findOrFail($id);
+        $incapacidad = Incapacidad::find($id);
+        if (!$incapacidad) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
 
         $data = $request->validate([
             'fecha_inicio' => 'sometimes|date',
@@ -50,9 +53,14 @@ class IncapacidadController extends Controller
 
     public function destroy($id)
     {
-        $incapacidad = Incapacidad::findOrFail($id);
-        $incapacidad->delete();
+        $registro = Incapacidad::find($id);
 
-        return response()->json(['message' => 'Incapacidad eliminada']);
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
+
+        $registro->delete();
+
+        return response()->json(['message' => 'Registro eliminado con éxito']);
     }
 }

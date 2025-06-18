@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('pais', 100);
             $table->string('telefono_empresa', 15);
             $table->string('extension_empresa', 10)->nullable();
-            $table->string('pagina_web', 100)->nullable();
+            $table->string('pagina_web')->nullable();
 
             $table->string('nombre_contacto_admin', 100);
             $table->string('telefono_contacto_admin', 15);

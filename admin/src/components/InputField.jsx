@@ -17,7 +17,7 @@ export const InputField = ({
   classInput = 'md:col-span-1',
   document = false,
   autofocus = false,
-  step = '1',
+  step = '0.01',
   multiple = false
 }) => {
   const { pathname } = useLocation()
@@ -138,7 +138,16 @@ export const InputField = ({
             autoFocus={autofocus}
             id={name}
             value={value || ''}
-            onChange={onChange}
+            onChange={(e) => {
+              const v = parseFloat(e.target.value)
+              if (v >= 0 || isNaN(v)) onChange(e)
+            }}
+            onKeyDown={(e) => {
+              if (['e', 'E', '+', '-'].includes(e.key)) {
+                e.preventDefault()
+              }
+            }}
+            onWheel={(e) => e.target.blur()}
             disabled={disabled}
             required={required}
             step={step}

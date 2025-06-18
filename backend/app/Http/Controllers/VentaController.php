@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\Cotizacion;
+use App\Models\MovimientoBancario;
 use App\Models\Venta;
 use App\Models\VentaHistorial;
 use Illuminate\Http\Request;
@@ -13,7 +15,7 @@ class VentaController extends Controller
     //  * Mostrar todos los registros.
     public function index()
     {
-        $registros = Venta::with(['cotizacion.sucursal', 'cotizacion.sucursal_empresa'])->where('eliminado', false)->get();
+        $registros = Venta::with(['cotizacion.sucursal', 'cotizacion.sucursal_empresa', 'banco'])->where('eliminado', false)->get();
         return response()->json($registros);
     }
 
@@ -36,8 +38,10 @@ class VentaController extends Controller
     {
         $data = $request->validate([
             'cotizacion_id' => 'required|exists:cotizaciones,id|unique:ventas,cotizacion_id',
+            'banco_id' => 'required|exists:bancos,id',
             'tipo_pago' => 'required|in:Crédito,Contado',
             'metodo_pago' => 'required|in:Transferencia bancaria,Tarjeta de crédito/débito,Efectivo,Cheques',
+            'referencia' => 'nullable|string',
             'numero_factura' => 'required|string',
             'fecha_emision' => 'required|date',
             'nota_credito' => 'nullable|numeric',
@@ -79,6 +83,7 @@ class VentaController extends Controller
 
         $baseRules = [
             'cotizacion_id' => 'sometimes|exists:cotizaciones,id|unique:ventas,cotizacion_id,' . $id,
+            'banco_id' => 'sometimes|exists:bancos,id',
             'estatus' => 'sometimes|in:Pendiente,Pagada,Vencida,Cancelada',
             'fecha_emision' => 'sometimes|date',
             'nota_credito' => 'nullable|numeric',
@@ -88,6 +93,7 @@ class VentaController extends Controller
         $pagadoRules = [
             'numero_factura' => 'required|string',
             'metodo_pago' => 'required|in:Transferencia bancaria,Tarjeta de crédito/débito,Efectivo,Cheques',
+            'referencia' => 'nullable|string',
         ];
 
         $rules = $request->estatus === 'Pagada' ? array_merge($baseRules, $pagadoRules) : $baseRules;
@@ -99,8 +105,35 @@ class VentaController extends Controller
         $data['nota_credito'] =  $request->nota_credito ?? 0;
         $data['total'] = $request->nota_credito > 0 ? $cotizacion->total - $request->nota_credito : $cotizacion->total;
 
+        $referencia = 'VENTA-' . ($data['numero_factura'] ?? $registro->numero_factura) . '-' . $registro->id;
+        if($data['metodo_pago'] === 'Transferencia bancaria' || $data['metodo_pago'] === 'Tarjeta de crédito/débito'){
+            $referencia = $data['referencia'];
+        }else{
+            $data['referencia'] = null;
+        }
+
         $registro->update($data);
         $this->registrarHistorial($registro, 'actualizada desde ventas', $cotizacion->credito_dias);
+
+
+        if($registro->estatus === 'Pagada'){
+            MovimientoBancario::updateOrCreate(
+                [
+                    'origen_id' => $registro->id,
+                    'origen_type' => 'venta',
+                ],
+                [
+                    'banco_id'        => $data['banco_id'] ?? $registro->banco_id,
+                    'fecha'           => Carbon::now()->format('Y-m-d'),
+                    'tipo_movimiento' => 'Ingreso',
+                    'concepto'        => 'Venta: ' . ($data['numero_factura'] ?? $registro->numero_factura),
+                    'referencia'      => $referencia,
+                    'monto'           => $registro->total,
+                    'metodo_pago'     => $data['metodo_pago'] ?? $registro->metodo_pago,
+                ]
+            );
+        }
+
         return response()->json(['message' => 'Registro actualizado'], 201);
     }
 
@@ -142,14 +175,14 @@ class VentaController extends Controller
 
     function registrarHistorial($venta, $accion, $credito_dias = null)
     {
-        echo json_encode($venta);
         $estatus = $venta->estatus ?? 'Pendiente';
         $motivo_cancelada = $venta->motivo_cancelada ?? '';
         $credito = $credito_dias ?? $venta->cotizacion->credito_dias;
 
         VentaHistorial::create([
-            // 'usuario_id' => auth()->id(),
+            'usuario_id' => Auth::id(),
             'venta_id' => $venta->id,
+            'banco_id' => $venta->banco_id,
             'cotizacion_id' => $venta->cotizacion_id,
             'numero_factura' => $venta->numero_factura,
             'fecha_emision' => $venta->fecha_emision,
@@ -163,5 +196,34 @@ class VentaController extends Controller
             'motivo_cancelada' => $motivo_cancelada,
             'accion' => $accion,
         ]);
+    }
+
+    public function ingresosMensuales()
+    {
+        $añoActual = now()->year;
+
+        $ventas = Venta::selectRaw("MONTH(fecha_emision) as mes, SUM(total - nota_credito) as total")
+            ->whereYear('fecha_emision', $añoActual)
+            ->where('eliminado', false)
+            ->where('estatus', 'Pagada')
+            ->groupBy('mes')
+            ->orderBy('mes')
+            ->get();
+
+        $meses = [
+            1 => 'Ene', 2 => 'Feb', 3 => 'Mar', 4 => 'Abr',
+            5 => 'May', 6 => 'Jun', 7 => 'Jul', 8 => 'Ago',
+            9 => 'Sep', 10 => 'Oct', 11 => 'Nov', 12 => 'Dic'
+        ];
+
+        $data = collect($meses)->map(function ($nombreMes, $numeroMes) use ($ventas) {
+            $venta = $ventas->firstWhere('mes', $numeroMes);
+            return [
+                'mes' => $nombreMes,
+                'total' => $venta ? round($venta->total, 2) : 0
+            ];
+        })->values();
+
+        return response()->json($data);
     }
 }

@@ -15,13 +15,16 @@ return new class extends Migration
     {
         Schema::create('movimientos_bancarios', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('banco_id')->constrained('bancos')->onDelete('cascade');
+            $table->foreignId('banco_id')->constrained('bancos')->onDelete('restrict');
             $table->enum('tipo_movimiento', ['Ingreso', 'Egreso']);
             $table->text('concepto');
             $table->date('fecha');
             $table->string('referencia')->nullable();
             $table->decimal('monto', 10, 2);
             $table->enum('metodo_pago', ['Transferencia bancaria', 'Tarjeta de crédito/débito', 'Efectivo', 'Cheques']);
+            $table->unsignedBigInteger('origen_id')->nullable();
+            $table->string('origen_type')->nullable();
+            $table->index(['origen_id', 'origen_type']);
             $table->timestamps();
         });
     }

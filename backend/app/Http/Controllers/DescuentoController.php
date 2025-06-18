@@ -32,7 +32,10 @@ class DescuentoController extends Controller
 
     public function update(Request $request, $id)
     {
-        $descuento = Descuento::findOrFail($id);
+        $registro = Descuento::find($id);
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
 
         $data = $request->validate([
             'monto' => 'sometimes|numeric|min:0',
@@ -41,15 +44,20 @@ class DescuentoController extends Controller
             'observaciones' => 'nullable|string',
         ]);
 
-        $descuento->update($data);
-        return $descuento;
+        $registro->update($data);
+        return $registro;
     }
 
     public function destroy($id)
     {
-        $descuento = Descuento::findOrFail($id);
-        $descuento->delete();
+        $registro = Descuento::find($id);
 
-        return response()->json(['message' => 'Descuento eliminado']);
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
+
+        $registro->delete();
+
+        return response()->json(['message' => 'Registro eliminado con éxito']);
     }
 }

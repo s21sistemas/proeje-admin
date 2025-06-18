@@ -15,13 +15,13 @@ return new class extends Migration
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
-            $table->string('modulo'); // Ej: 'Usuario', 'Rol', 'Pago'
-            $table->unsignedBigInteger('modulo_id'); // ID del modelo afectado
-            $table->string('accion'); // Ej: 'crear', 'actualizar', 'eliminar'
-            $table->json('datos_anteriores')->nullable(); // Estado anterior
-            $table->json('datos_nuevos')->nullable(); // Estado nuevo
-            $table->unsignedBigInteger('usuario_id')->nullable(); // Usuario que hizo el cambio
-            $table->string('ip')->nullable(); // IP del usuario
+            $table->string('modulo');
+            $table->unsignedBigInteger('modulo_id');
+            $table->string('accion'); //
+            $table->json('datos_anteriores')->nullable();
+            $table->json('datos_nuevos')->nullable();
+            $table->string('ip')->nullable();
+            $table->foreignId('usuario_id')->constrained('usuarios')->onDelete('restrict');
             $table->timestamps();
         });
     }

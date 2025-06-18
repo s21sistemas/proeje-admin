@@ -25,7 +25,11 @@ export const getGasto = async () => {
             label: gasto.banco.nombre,
             value: gasto.banco.id
           },
-
+          modulo_concepto_id: {
+            label: gasto.modulo_concepto.nombre,
+            value: gasto.modulo_concepto.id
+          },
+          concepto: gasto.modulo_concepto.nombre,
           banco: gasto.banco.nombre,
           total_format: `$${gasto.total}`,
           fecha: dayjs(gasto.created_at).format('DD/MM/YYYY')

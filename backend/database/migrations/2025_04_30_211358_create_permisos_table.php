@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('permisos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('rol_id')->constrained('roles')->onDelete('cascade');
-            $table->foreignId('modulo_id')->constrained('modulos')->onDelete('cascade');
+            $table->foreignId('rol_id')->constrained('roles')->onDelete('restrict');
+            $table->foreignId('modulo_id')->constrained('modulos')->onDelete('restrict');
             $table->boolean('crear')->default(false);
-            $table->boolean('consultar')->default(false);
+            $table->boolean('consultar')->default(true);
             $table->boolean('actualizar')->default(false);
             $table->boolean('eliminar')->default(false);
             $table->timestamps();

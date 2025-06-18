@@ -4,37 +4,14 @@ export const formOptions = {
       required: false,
       type: 'text',
       label: 'Orden de servicio',
-      name: 'idServicio'
+      name: 'orden'
     },
+    { required: false, type: 'text', label: 'Guardia', name: 'nombre' },
     {
       required: false,
       type: 'text',
-      label: 'Supervisor',
-      name: 'supervisorId'
-    },
-    {
-      required: false,
-      type: 'text',
-      label: 'Elemento que recibe el uniforme',
-      name: 'elementoRecibe'
-    },
-    {
-      required: false,
-      type: 'text',
-      label: 'Elemento que entrega el uniforme',
-      name: 'elementoEntrega'
-    },
-    {
-      required: false,
-      type: 'text',
-      label: 'Fecha',
-      name: 'fecha'
-    },
-    {
-      required: false,
-      type: 'text',
-      label: 'Tipo',
-      name: 'tipo'
+      label: 'Zona',
+      name: 'zona'
     },
     {
       required: false,
@@ -45,8 +22,26 @@ export const formOptions = {
     {
       required: false,
       type: 'text',
-      label: 'Zona',
-      name: 'zona'
+      label: 'Elemento que entrega el uniforme',
+      name: 'quien_entrega'
+    },
+    {
+      required: false,
+      type: 'text',
+      label: 'Elemento que recibe el uniforme',
+      name: 'quien_recibe'
+    },
+    {
+      required: false,
+      type: 'text',
+      label: 'Tipo',
+      name: 'tipo'
+    },
+    {
+      required: false,
+      type: 'datetime-local',
+      label: 'Fecha y hora del reporte',
+      name: 'fecha'
     }
   ]
 }

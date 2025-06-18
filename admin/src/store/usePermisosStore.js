@@ -5,16 +5,25 @@ export const usePermisosStore = create((set) => ({
   permisosSeleccionados: {},
 
   setModulosSeleccionados: (modulos) =>
-    set({ modulosSeleccionados: modulos || [] }),
+    set((state) => {
+      const modulosIdActuales = (modulos || []).map((m) => m.value)
+      const nuevosPermisos = Object.fromEntries(
+        Object.entries(state.permisosSeleccionados).filter(([moduloId]) =>
+          modulosIdActuales.includes(Number(moduloId))
+        )
+      )
+      return {
+        modulosSeleccionados: modulos || [],
+        permisosSeleccionados: nuevosPermisos
+      }
+    }),
 
   setPermisosDesdeAPI: (permisosAPI) => {
     const permisos = {}
 
-    permisosAPI.forEach(
-      ({ modulo_id, consultar, crear, actualizar, eliminar }) => {
-        permisos[modulo_id] = { consultar, crear, actualizar, eliminar }
-      }
-    )
+    permisosAPI.forEach(({ modulo_id, crear, actualizar, eliminar }) => {
+      permisos[modulo_id] = { crear, actualizar, eliminar }
+    })
 
     set({ permisosSeleccionados: permisos })
   },
@@ -25,7 +34,6 @@ export const usePermisosStore = create((set) => ({
 
       if (!permisos[moduloId]) {
         permisos[moduloId] = {
-          consultar: false,
           crear: false,
           actualizar: false,
           eliminar: false

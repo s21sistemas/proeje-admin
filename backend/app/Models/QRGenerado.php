@@ -17,7 +17,7 @@ class QRGenerado extends Model
 
     public function orden_servicio()
     {
-        return $this->belongsTo(OrdenServicio::class);
+        return $this->belongsTo(OrdenServicio::class, 'orden_servicio_id');
     }
 
     public function puntos_recorrido()

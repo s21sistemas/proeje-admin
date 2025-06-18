@@ -16,7 +16,7 @@ const columns = [
 export default function RecorridosGuardiaPage() {
   const { modalType, currentItem } = useModal()
 
-  const { data, isLoading, isError, error, handleSubmit, handleDelete } =
+  const { data, isLoading, isError, error, handleDelete } =
     useRecorridosGuardia()
 
   if (isError) return <div>{error.message}</div>
@@ -29,12 +29,6 @@ export default function RecorridosGuardiaPage() {
         title='Recorridos guardados de los guardias'
         loading={isLoading}
       />
-
-      {(modalType === 'add' ||
-        modalType === 'edit' ||
-        modalType === 'view') && (
-        <BaseForm handleSubmit={handleSubmit} Inputs={<FormGenerarQRS />} />
-      )}
 
       {modalType === 'delete' && currentItem && (
         <ModalDelete handleDelete={handleDelete} />

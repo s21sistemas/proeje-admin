@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { loginRequest, logoutRequest, getUserProfile } from '../api/auth'
 import { useNavigate } from 'react-router'
+import { toast } from 'sonner'
 
 const AuthContext = createContext()
 
@@ -11,14 +12,18 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate()
 
   const login = async (email, password) => {
-    const response = await loginRequest({ email, password })
-    const token = response.token
-    localStorage.setItem('token', token)
+    try {
+      const response = await loginRequest({ email, password })
+      const token = response.token
+      localStorage.setItem('token', token)
 
-    const profile = await getUserProfile()
+      const profile = await getUserProfile()
 
-    setUser(profile)
-    navigate('/')
+      setUser(profile)
+      navigate('/')
+    } catch (error) {
+      toast.error(error.message)
+    }
   }
 
   const logout = async () => {
@@ -51,7 +56,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, isAuthenticated: !!user, loading }}
+      value={{ user, setUser, login, logout, isAuthenticated: !!user, loading }}
     >
       {children}
     </AuthContext.Provider>

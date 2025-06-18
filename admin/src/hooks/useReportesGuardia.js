@@ -1,36 +1,42 @@
-import { useQuery } from '@tanstack/react-query'
-import { getReportesGuardia } from '../api/reportes-guardias'
-import { useEffect } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  getReporteGuardia,
+  removeReporteGuardia
+} from '../api/reportes-guardias'
+import { toast } from 'sonner'
+import { useModalStore } from '../store/useModalStore'
 
 export const useReportesGuardia = () => {
-  const query = useQuery({
+  const closeModal = useModalStore((state) => state.closeModal)
+
+  const queryClient = useQueryClient()
+
+  const { isLoading, isError, data, error } = useQuery({
     queryKey: ['reportes-guardias'],
-    queryFn: async () => {
-      const { data, unsubscribe } = await getReportesGuardia()
-      return { data, unsubscribe }
-    },
-    refetchOnWindowFocus: false,
-    staleTime: Infinity,
-    enabled: false
+    queryFn: getReporteGuardia
   })
 
-  useEffect(() => {
-    let unsubscribe = null
-
-    getReportesGuardia().then(({ unsubscribe: unsub }) => {
-      query.refetch()
-      unsubscribe = unsub
-    })
-
-    return () => {
-      if (unsubscribe) unsubscribe()
+  const deleteMutation = useMutation({
+    mutationFn: removeReporteGuardia,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['reportes-guardias'] })
+      toast.success('Registro eliminado')
+    },
+    onError: (error) => {
+      toast.error(error.message)
     }
-  }, [])
+  })
+
+  const handleDelete = (id) => {
+    deleteMutation.mutate(id)
+    closeModal()
+  }
 
   return {
-    data: query.data?.data ?? [],
-    isLoading: query.isLoading,
-    isError: query.isError,
-    error: query.error
+    data,
+    error,
+    isError,
+    isLoading,
+    handleDelete
   }
 }

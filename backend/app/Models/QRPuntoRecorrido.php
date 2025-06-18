@@ -18,7 +18,7 @@ class QRPuntoRecorrido extends Model
 
     public function qr_generado()
     {
-        return $this->belongsTo(QRGenerado::class);
+        return $this->belongsTo(QRGenerado::class, 'qr_generado_id');
     }
 
     public function escaneos()

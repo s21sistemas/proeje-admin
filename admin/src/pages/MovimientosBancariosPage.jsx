@@ -11,7 +11,8 @@ const columns = [
   { key: 'concepto', name: 'Concepto' },
   { key: 'referencia', name: 'Referencia' },
   { key: 'monto_format', name: 'Monto' },
-  { key: 'fecha_format', name: 'Fecha movimiento' }
+  { key: 'fecha_format', name: 'Fecha movimiento' },
+  { key: 'modulo', name: 'Módulo' }
 ]
 
 export default function MovimientosBancariosPage() {

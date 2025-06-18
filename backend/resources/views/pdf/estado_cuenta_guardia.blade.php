@@ -162,8 +162,10 @@
             <ul>
                 @foreach($data['descuentos'] as $desc)
                     <li>
-                        {{ $desc['tipo'] }} - <span class="danger">${{ number_format($desc['monto'], 2) }}</span>
-                        @if($desc['motivo'])</span> - Motivo: {{ $desc['motivo'] }} @endif
+                        {{ $desc['modulo_descuento']['nombre'] }}
+                        @if($desc['modulo_descuento']['descripcion']) ({{ $desc['modulo_descuento']['descripcion'] }}) @endif
+                         - <span class="danger">${{ number_format($desc['monto'], 2) }}</span>
+                        @if($desc['observaciones'])</span> - Obs: {{ $desc['motivo'] }} @endif
                     </li>
                 @endforeach
             </ul>
@@ -176,16 +178,19 @@
         <h3>7. Préstamos</h3>
         @if(count($data['prestamos']) > 0)
             @foreach($data['prestamos'] as $prestamo)
-                <p>Préstamo de ${{ number_format($prestamo['monto_total'], 2) }} ({{ count($prestamo['abonos']) }}/{{ $prestamo['numero_pagos'] }} pagos) -
+                <p style="margin-bottom: 0px">Préstamo de ${{ number_format($prestamo['monto_total'], 2) }} ({{ count($prestamo['abonos']) }}/{{ $prestamo['numero_pagos'] }} pagos) -
                     @if($data['egresos']['prestamos'] > 0)
                         Monto restante: <span class="danger">${{ number_format($data['egresos']['prestamos'], 2) }}</span>
                     @else
                         Estado: <span class="success">{{ $prestamo['estatus'] }}</span>
                     @endif
                 </p>
+                <p style="margin-top: 0px">
+                    Motivo: <u>{{ $prestamo['modulo_prestamo']['nombre'] }}</u>
+                </p>
                 <ul>
                     @foreach($prestamo['abonos'] as $abono)
-                        <li>${{ number_format($abono['monto'], 2) }} el {{ Carbon::parse($abono['fecha'])->format('d/m/Y') }} por {{ $abono['metodo_pago'] }} @if($abono['observaciones']) - Obs: {{ $abono['observaciones'] }} @endif</li>
+                        <li>Abono de ${{ number_format($abono['monto'], 2) }} el {{ Carbon::parse($abono['fecha'])->format('d/m/Y') }} por {{ $abono['metodo_pago'] }} @if($abono['observaciones']) - Obs: {{ $abono['observaciones'] }} @endif</li>
                     @endforeach
                 </ul>
             @endforeach
@@ -193,6 +198,16 @@
             <p>No tiene préstamos registrados.</p>
         @endif
     </div>
+
+    @if(isset($data['tiempo_trabajado_total']))
+        <div class="section" style="background: #eef9e9; margin-top: 25px;">
+            <h3 style="color: #198754; margin-bottom: 12px;">8. Tiempo total trabajado en el período</h3>
+            <p style="font-size: 13px;">
+                {{ $data['tiempo_trabajado_total']['formato'] ?? '0 segundos' }}
+            </p>
+            <p class="nota">* Sólo se considera el tiempo de los registros con check-in y check-out completos.</p>
+        </div>
+    @endif
 
     <div class="section resumen">
         <h3>Resumen Final</h3>

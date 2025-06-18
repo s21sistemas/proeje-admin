@@ -21,6 +21,7 @@ use App\Models\Incapacidad;
 use App\Models\TiempoExtra;
 use App\Models\Prestamo;
 use App\Models\AbonoPrestamo;
+use App\Models\CheckGuardia;
 use Carbon\Carbon;
 
 class EstadoCuentaController extends Controller
@@ -78,10 +79,10 @@ class EstadoCuentaController extends Controller
         $incapacidades = Incapacidad::where('guardia_id', $guardiaId)->whereBetween('fecha_inicio', [$inicio, $fin])->get();
         $incapPagadas = $incapacidades->sum('pago_empresa');
 
-        $descuentos = Descuento::where('guardia_id', $guardiaId)->whereBetween('fecha', [$inicio, $fin])->get();
+        $descuentos = Descuento::with('modulo_descuento')->where('guardia_id', $guardiaId)->whereBetween('fecha', [$inicio, $fin])->get();
         $totalDescuentos = $descuentos->sum('monto');
 
-        $prestamos = Prestamo::where('guardia_id', $guardiaId)->whereBetween('fecha_prestamo', [$inicio, $fin])->get();
+        $prestamos = Prestamo::with('modulo_prestamo')->where('guardia_id', $guardiaId)->whereBetween('fecha_prestamo', [$inicio, $fin])->get();
         $saldoRestantePrestamosPendientes = $prestamos->where('estatus', 'Pendiente')->sum('saldo_restante');
         $prestamosPendientes = $prestamos->where('estatus', 'Pendiente')->pluck('id');
 
@@ -105,6 +106,22 @@ class EstadoCuentaController extends Controller
 
         // Para el módulo de pagos
         $egresosPago = $totalFaltasMonto + $totalDescuentos + $incapNoPagadas;
+
+        // Mostrar horas trabajadas
+        $checks = CheckGuardia::where('guardia_id', $guardiaId)->whereBetween('fecha_entrada', [$inicio, $fin])->whereNotNull('fecha_salida')->get();
+        $totalSegundos = $checks->sum('tiempo_trabajado_segundos');
+
+        $dias = floor($totalSegundos / 86400);
+        $horas = floor(($totalSegundos % 86400) / 3600);
+        $minutos = floor(($totalSegundos % 3600) / 60);
+        $segundos = $totalSegundos % 60;
+
+        $partes = [];
+        if ($dias > 0)      $partes[] = "$dias día(s)";
+        if ($horas > 0)     $partes[] = "$horas hora(s)";
+        if ($minutos > 0)   $partes[] = "$minutos minuto(s)";
+        $partes[] = "$segundos segundo(s)";
+        $totalTiempoTrabajado = implode(', ', $partes);
 
         return response()->json([
             'guardia' => [
@@ -158,7 +175,11 @@ class EstadoCuentaController extends Controller
                 'pago_bruto' => $pagoBruto,
                 'total_prestaciones' => $totalPrestaciones,
                 'pago_neto' => $pagoNeto,
-            ]
+            ],
+            'tiempo_trabajado_total' => [
+                'segundos' => $totalSegundos,
+                'formato' => $totalTiempoTrabajado
+            ],
         ]);
     }
 
@@ -382,7 +403,7 @@ class EstadoCuentaController extends Controller
             ->get();
 
         // Gastos
-        $gastos = Gasto::where('banco_id', $banco->id)
+        $gastos = Gasto::with(['modulo_concepto'])->where('banco_id', $banco->id)
             ->whereBetween('created_at', [$inicio, $fin])
             ->get();
 
@@ -392,11 +413,17 @@ class EstadoCuentaController extends Controller
             ->whereBetween('created_at', [$inicio, $fin])
             ->get();
 
+        // Ventas pagadas
+        $ventas = Venta::with(['cotizacion.sucursal', 'cotizacion.sucursal_empresa', 'banco'])
+            ->where('eliminado', false)
+            ->where('estatus', 'Pagada')
+            ->where('banco_id', $banco->id)
+            ->whereBetween('created_at', [$inicio, $fin])
+            ->get();
+
         // Calcular totales
         $totalIngresos = $movimientos->where('tipo_movimiento', 'Ingreso')->sum('monto');
-        $totalEgresos = $movimientos->where('tipo_movimiento', 'Egreso')->sum('monto')
-            + $gastos->sum('total')
-            + $ordenes->sum('total');
+        $totalEgresos = $movimientos->where('tipo_movimiento', 'Egreso')->sum('monto');
 
         $balance = $totalIngresos - $totalEgresos;
 
@@ -409,6 +436,7 @@ class EstadoCuentaController extends Controller
             'movimientos' => $movimientos,
             'gastos' => $gastos,
             'ordenes_compra' => $ordenes,
+            'ventas' => $ventas,
             'resumen' => [
                 'ingresos' => $totalIngresos,
                 'egresos' => $totalEgresos,

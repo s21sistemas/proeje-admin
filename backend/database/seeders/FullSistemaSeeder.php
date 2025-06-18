@@ -16,22 +16,23 @@ class FullSistemaSeeder extends Seeder
         $modulos = [
             'roles', 'usuarios', 'modulos', 'perfil', 'guardias', 'sucursales-empresa', 'blacklist',
             'incapacidades', 'vacaciones', 'tiempo-extra', 'faltas', 'descuentos', 'prestamos',
-            'modulo-prestamos', 'modulo-descuentos', 'abonos-prestamo', 'bancos', 'movimientos-bancarios',
+            'modulo-prestamos', 'modulo-descuentos', 'modulo-conceptos', 'abonos-prestamo', 'bancos', 'movimientos-bancarios',
             'cotizaciones', 'clientes', 'sucursales', 'proveedores', 'articulos', 'vehiculos',
             'boletas-gasolina', 'ordenes-compra', 'compras', 'gastos', 'ventas', 'ventas-historial',
             'almacen', 'almacen-entradas', 'almacen-salidas', 'equipo', 'orden-servicio', 'cartera-vencida',
             'logs', 'generar-qr', 'estadocuenta-guardias', 'reportes-guardias', 'estadocuenta-clientes',
             'estadocuenta-proveedores', 'recorridos-guardia', 'estadocuenta-bancos', 'generador-reportes',
-            'guardias-check', 'bitacoras-guardia', 'reporte-incidentes', 'reporte-guardias', 'reporte-supervisores', 'pagos-empleados'
+            'check-guardia', 'reporte-bitacoras', 'reporte-incidente-guardia', 'reporte-guardia', 'reporte-supervisor', 'reporte-patrullas', 'pagos-empleados'
         ];
 
         $modulosSupervisor = [
-            'guardias-check',
-            'bitacoras-guardia',
-            'reporte-incidentes',
-            'reporte-guardias',
-            'reporte-supervisores',
-            'recorridos-guardia'
+            'check-guardia',
+            'reporte-bitacoras',
+            'reporte-incidente-guardia',
+            'reporte-guardia',
+            'reporte-supervisor',
+            'recorridos-guardia',
+            'reporte-patrullas'
         ];
 
         DB::beginTransaction();
@@ -57,11 +58,13 @@ class FullSistemaSeeder extends Seeder
                 ]);
             }
 
+
             Usuario::create([
                 'nombre_completo' => 'Javier Salazar',
                 'email' => 'javssala@gmail.com',
                 'password' => bcrypt('12345678'),
                 'rol_id' => $adminRol->id,
+                'foto' => 'default.png',
             ]);
 
             $supervisorRol = Rol::create([
@@ -73,7 +76,7 @@ class FullSistemaSeeder extends Seeder
             foreach ($supervisorModulos as $modulo) {
                 $supervisorRol->permisos()->create([
                     'modulo_id' => $modulo->id,
-                    'crear' => true,
+                    'crear' => false,
                     'consultar' => true,
                     'actualizar' => false,
                     'eliminar' => false,
@@ -85,6 +88,7 @@ class FullSistemaSeeder extends Seeder
                 'email' => 'supervisor@example.com',
                 'password' => bcrypt('12345678'),
                 'rol_id' => $supervisorRol->id,
+                'foto' => 'default.png',
             ]);
 
             DB::commit();

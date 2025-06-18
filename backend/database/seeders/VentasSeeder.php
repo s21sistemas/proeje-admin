@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Cotizacion;
+use App\Models\Banco;
 use App\Models\Venta;
 use App\Models\VentaHistorial;
 use Illuminate\Database\Seeder;
@@ -12,13 +13,16 @@ class VentasSeeder extends Seeder
     public function run(): void
     {
         $cotizaciones = Cotizacion::inRandomOrder()->take(10)->get();
+        $bancos = Banco::all();
 
         foreach ($cotizaciones as $cotizacion) {
             $fechaEmision = now()->subDays(rand(1, 30));
             $fechaVencimiento = (clone $fechaEmision)->addDays(15);
             $tipoPago = fake()->randomElement(['Crédito', 'Contado']);
+            $banco = $bancos->random();
 
             $venta = Venta::create([
+                'banco_id' => $banco->id,
                 'cotizacion_id' => $cotizacion->id,
                 'numero_factura' => fake()->unique()->bothify('FAC-####'),
                 'fecha_emision' => $fechaEmision,
@@ -35,6 +39,7 @@ class VentasSeeder extends Seeder
             VentaHistorial::create([
                 'venta_id' => $venta->id,
                 'cotizacion_id' => $cotizacion->id,
+                'banco_id' => $banco->id,
                 'numero_factura' => $venta->numero_factura,
                 'fecha_emision' => $venta->fecha_emision,
                 'fecha_vencimiento' => $venta->fecha_vencimiento,
@@ -46,6 +51,7 @@ class VentasSeeder extends Seeder
                 'estatus' => $venta->estatus,
                 'motivo_cancelada' => $venta->motivo_cancelada,
                 'accion' => 'Creación',
+                'usuario_id' => 1,
             ]);
         }
     }

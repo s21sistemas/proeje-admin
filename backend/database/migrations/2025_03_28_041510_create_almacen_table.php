@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('almacen', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('articulo_id')->constrained('articulos')->onDelete('cascade');
+            $table->foreignId('articulo_id')->constrained('articulos')->onDelete('restrict');
             $table->string('numero_serie')->unique();
             $table->date('fecha_entrada');
             $table->date('fecha_salida')->nullable();

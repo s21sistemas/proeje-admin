@@ -56,6 +56,22 @@ export const formOptions = {
     },
     {
       required: true,
+      type: 'text',
+      label: 'Referencia *',
+      name: 'referencia',
+      condition: (metodo) =>
+        metodo === 'Transferencia bancaria' ||
+        metodo === 'Tarjeta de crédito/débito'
+    },
+    {
+      required: true,
+      type: 'number',
+      step: '0.01',
+      label: 'Descuento ($) *',
+      name: 'descuento_monto'
+    },
+    {
+      required: true,
       type: 'number',
       step: '0.01',
       label: 'Subtotal *',

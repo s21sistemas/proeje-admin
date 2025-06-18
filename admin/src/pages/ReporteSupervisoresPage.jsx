@@ -3,20 +3,22 @@ import { BaseTable } from '../components/BaseTable'
 import { useModal } from '../hooks/useModal'
 import { useReportesSupervisor } from '../hooks/useReportesSupervisor'
 import { FormReporteSupervisor } from '../components/modals/FormReporteSupervisor'
+import { ModalDelete } from '../components/ModalDelete'
 
 const columns = [
-  { key: 'servicioId', name: 'Orden' },
-  { key: 'supervisorId', name: 'Supervisor' },
-  { key: 'tipo', name: 'Tipo' },
+  { key: 'orden', name: 'Orden de servicio' },
+  { key: 'nombre', name: 'Supervisor' },
   { key: 'zona', name: 'Zona' },
   { key: 'turno', name: 'Turno' },
-  { key: 'fecha', name: 'Fecha' }
+  { key: 'tipo', name: 'Tipo de reporte' },
+  { key: 'fecha_format', name: 'Fecha' }
 ]
 
 export default function ReporteSupervisoresPage() {
-  const { modalType } = useModal()
+  const { modalType, currentItem } = useModal()
 
-  const { data, isLoading, isError, error } = useReportesSupervisor()
+  const { data, isLoading, isError, error, handleDelete } =
+    useReportesSupervisor()
 
   if (isError) return <div>{error.message}</div>
 
@@ -30,6 +32,10 @@ export default function ReporteSupervisoresPage() {
       />
 
       {modalType === 'view' && <BaseForm Inputs={<FormReporteSupervisor />} />}
+
+      {modalType === 'delete' && currentItem && (
+        <ModalDelete handleDelete={handleDelete} />
+      )}
     </div>
   )
 }

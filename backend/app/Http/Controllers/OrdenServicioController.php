@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
 use App\Models\Guardia;
 use App\Models\OrdenServicioGuardia;
 use App\Models\OrdenServicio;
@@ -13,7 +14,29 @@ class OrdenServicioController extends Controller
     //  * Mostrar todos los registros.
     public function index()
     {
-        $registros = OrdenServicio::with(['venta.cotizacion.sucursal', 'ordenesServicioGuardias.guardia'])->where('eliminado', false)->get();
+        $usuario = Auth::user();
+
+        // Si tiene guardia_id, significa que es supervisor
+        if ($usuario->guardia_id) {
+            // Solo devuelve las órdenes donde este guardia esté asignado como supervisor
+            $registros = OrdenServicio::with([
+                    'venta.cotizacion.sucursal',
+                    'ordenesServicioGuardias.guardia'
+                ])
+                ->where('eliminado', false)
+                ->whereHas('ordenesServicioGuardias', function($q) use ($usuario) {
+                    $q->where('guardia_id', $usuario->guardia_id);
+                })->get();
+        } else {
+            // Admin o rol con permisos
+            $registros = OrdenServicio::with([
+                    'venta.cotizacion.sucursal',
+                    'ordenesServicioGuardias.guardia'
+                ])
+                ->where('eliminado', false)
+                ->get();
+        }
+
         return response()->json($registros);
     }
 
@@ -131,7 +154,10 @@ class OrdenServicioController extends Controller
 
         DB::beginTransaction();
         try {
-            $orden = OrdenServicio::findOrFail($id);
+            $orden = OrdenServicio::find($id);
+            if (!$orden) {
+                return response()->json(['error' => 'Registro no encontrado'], 404);
+            }
             $orden->update($data);
 
             // Guardamos los IDs de todos los guardias que deben estar asignados
@@ -180,12 +206,17 @@ class OrdenServicioController extends Controller
     //  * Eliminar un registro.
     public function destroy($id)
     {
-        $registro = OrdenServicio::findOrFail($id);
+        $registro = OrdenServicio::find($id);
+
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
 
         $guardias = $registro->ordenesServicioGuardias->pluck('guardia_id')->toArray();
         Guardia::whereIn('id', $guardias)->update(['estatus' => 'Disponible']);
 
-        $registro->update(['eliminado' => true]);
+        $registro->delete();
+        // $registro->update(['eliminado' => true]);
 
         return response()->json(['message' => 'Registro eliminado con éxito']);
     }

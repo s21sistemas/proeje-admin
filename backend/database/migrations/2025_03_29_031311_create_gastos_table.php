@@ -15,10 +15,12 @@ return new class extends Migration
     {
         Schema::create('gastos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('banco_id')->constrained('bancos')->onDelete('cascade');
-            $table->string('concepto');
+            $table->foreignId('banco_id')->constrained('bancos')->onDelete('restrict');
+            $table->foreignId('modulo_concepto_id')->constrained('modulo_conceptos')->onDelete('restrict');
             $table->enum('metodo_pago', ['Transferencia bancaria', 'Tarjeta de crédito/débito', 'Efectivo', 'Cheques']);
+            $table->string('referencia')->nullable();
             $table->decimal('impuesto', 10, 2)->default(0);
+            $table->decimal('descuento_monto', 10, 2)->default(0);
             $table->decimal('subtotal', 10, 2);
             $table->decimal('total', 10, 2);
             $table->timestamps();

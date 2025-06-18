@@ -11,7 +11,7 @@ class VentaHistorialController extends Controller
     //  * Mostrar todos los registros.
     public function index()
     {
-        $registros = VentaHistorial::with(['cotizacion.sucursal', 'venta.cotizacion.sucursal'])->get();
+        $registros = VentaHistorial::with(['cotizacion.sucursal', 'venta.cotizacion.sucursal', 'usuario.rol', 'banco', 'venta.banco'])->get();
         return response()->json($registros);
     }
 }

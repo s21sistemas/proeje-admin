@@ -3,20 +3,20 @@ import { BaseTable } from '../components/BaseTable'
 import { useModal } from '../hooks/useModal'
 import { useReportesGuardia } from '../hooks/useReportesGuardia'
 import { FormReporteGuardia } from '../components/modals/FormReporteGuardia'
+import { ModalDelete } from '../components/ModalDelete'
 
 const columns = [
-  { key: 'servicioId', name: 'Orden' },
-  { key: 'guardia', name: 'Nombre' },
-  { key: 'supervisor', name: 'Supervisor' },
-  { key: 'puntoVigilancia', name: 'Punto de vigilancia' },
+  { key: 'orden', name: 'Orden de servicio' },
+  { key: 'nombre', name: 'Guardia' },
+  { key: 'punto_vigilancia', name: 'Punto de vigilancia' },
   { key: 'turno', name: 'Turno' },
   { key: 'fecha_format', name: 'Fecha' }
 ]
 
 export default function ReporteGuardiasPage() {
-  const { modalType } = useModal()
+  const { modalType, currentItem } = useModal()
 
-  const { data, isLoading, isError, error } = useReportesGuardia()
+  const { data, isLoading, isError, error, handleDelete } = useReportesGuardia()
 
   if (isError) return <div>{error.message}</div>
 
@@ -30,6 +30,10 @@ export default function ReporteGuardiasPage() {
       />
 
       {modalType === 'view' && <BaseForm Inputs={<FormReporteGuardia />} />}
+
+      {modalType === 'delete' && currentItem && (
+        <ModalDelete handleDelete={handleDelete} />
+      )}
     </div>
   )
 }

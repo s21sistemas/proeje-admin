@@ -100,6 +100,7 @@ export const getGuardiasBySucursal = async (id) => {
     const { data } = response
 
     return data.map((guardia) => ({
+      ...guardia,
       id: guardia.id,
       nombre_completo: `${guardia.nombre} ${guardia.apellido_p} ${guardia.apellido_m}`
     }))
@@ -145,6 +146,22 @@ export const getGuardiaById = async (id) => {
     const { data } = response
 
     return data
+  } catch (error) {
+    console.error('Error al obetener el registro', error)
+    throw new Error(error.response.data.message)
+  }
+}
+
+// Leer registros
+export const getSupervisores = async () => {
+  try {
+    const response = await apiClient.get('supervisores')
+    const { data } = response
+
+    return data.map((supervisor) => ({
+      ...supervisor,
+      nombre_completo: `${supervisor.nombre} ${supervisor.apellido_p} ${supervisor.apellido_m}`
+    }))
   } catch (error) {
     console.error('Error al obetener el registro', error)
     throw new Error(error.response.data.message)

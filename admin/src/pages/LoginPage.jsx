@@ -1,6 +1,7 @@
 import { LoginForm } from '../components/LoginForm'
 import logo from '../assets/imgs/logo.png'
 import { useAuth } from '../context/AuthContext'
+import { Toaster } from 'sonner'
 
 export default function LoginPage() {
   const { isAuthenticated } = useAuth()
@@ -11,6 +12,7 @@ export default function LoginPage() {
 
   return (
     <div className='flex min-h-screen items-center justify-center bg-primary-dark p-4'>
+      <Toaster richColors position='bottom-right' />
       <div className='mx-auto w-full max-w-md rounded-lg bg-white p-6 shadow-md'>
         <div className='mb-6 flex justify-center'>
           <div className='h-24 w-24 overflow-hidden rounded-full bg-primary/10'>

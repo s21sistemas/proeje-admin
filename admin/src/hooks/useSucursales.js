@@ -8,6 +8,7 @@ import {
   removeSucursal,
   updateSucursal
 } from '../api/sucursales'
+import { sucursalClienteSchema } from '../zod/schemas'
 
 export const useSucursales = () => {
   const modalType = useModalStore((state) => state.modalType)
@@ -62,6 +63,17 @@ export const useSucursales = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
+    // Validación con Zod
+    const parsed = sucursalClienteSchema.safeParse(formData)
+
+    if (!parsed.success) {
+      const errors = parsed.error.flatten().fieldErrors
+      const firstError = Object.values(errors)[0][0]
+      toast.error(firstError)
+      return
+    }
+
     Swal.fire({
       title:
         '<h2 style="font-family: "sans-serif";">Guardando registro, por favor espere...</h2>',

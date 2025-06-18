@@ -27,7 +27,7 @@ export const formOptions = {
     {
       required: false,
       type: 'text',
-      label: 'Referencia *',
+      label: 'Referencia',
       name: 'referencia'
     },
     {

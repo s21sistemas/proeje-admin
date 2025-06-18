@@ -70,7 +70,8 @@ export const useGastos = () => {
 
     const newData = {
       ...formData,
-      banco_id: formData.banco_id.value
+      banco_id: formData.banco_id.value,
+      modulo_concepto_id: formData.modulo_concepto_id.value
     }
 
     if (modalType === 'add') {

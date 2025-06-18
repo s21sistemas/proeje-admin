@@ -12,7 +12,7 @@ class OrdenCompra extends Model
 
     protected $table = 'ordenes_compra';
 
-    protected $fillable = ['proveedor_id', 'banco_id', 'articulo_id', 'numero_oc', 'cantidad_articulo', 'precio_articulo', 'metodo_pago', 'impuesto', 'subtotal', 'total', 'estatus'];
+    protected $fillable = ['proveedor_id', 'banco_id', 'articulo_id', 'numero_oc', 'cantidad_articulo', 'precio_articulo', 'metodo_pago', 'impuesto', 'descuento_monto', 'subtotal', 'total', 'estatus', 'referencia'];
 
     protected $hidden = ['proveedor_id', 'banco_id', 'articulo_id'];
 
@@ -29,5 +29,10 @@ class OrdenCompra extends Model
     public function articulo()
     {
         return $this->belongsTo(Articulo::class, 'articulo_id')->select(['id', 'nombre', 'precio_compra']);
+    }
+
+    public function movimientosBancarios()
+    {
+        return $this->morphMany(MovimientoBancario::class, 'origen');
     }
 }

@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('pagos_empleados', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('cascade');
+            $table->foreignId('guardia_id')->constrained('guardias')->onDelete('restrict');
             $table->decimal('sueldo_base', 10, 2);
             $table->date('periodo_inicio');
             $table->date('periodo_fin');

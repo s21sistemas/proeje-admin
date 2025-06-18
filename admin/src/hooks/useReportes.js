@@ -10,6 +10,7 @@ import {
   getEstadoCuentaCliente,
   getEstadoCuentaGuardia,
   getEstadoCuentaProveedor,
+  getHorasTrabajadasGuardia,
   getReportRH,
   getReporte
 } from '../api/reportes'
@@ -74,46 +75,75 @@ export const useReportes = () => {
     }))
   }
 
-  const loadOptionsBancos = async () => {
+  const loadOptionsBancos = async (inputValue) => {
     try {
-      const response = await getBanco()
-      const data = response.map((info) => ({
-        value: info.id,
-        label: info.nombre
-      }))
+      if (!loadOptionsBancos.cachedData) {
+        const response = await getBanco()
+        const data = response.map((info) => ({
+          value: info.id,
+          label: info.nombre
+        }))
 
-      if (data.length > 0) data.unshift({ label: 'Todos', value: 'todos' })
+        if (data.length > 0) data.unshift({ label: 'Todos', value: 'todos' })
 
-      return data
+        loadOptionsBancos.cachedData = data
+      }
+
+      if (!inputValue) return loadOptionsBancos.cachedData
+
+      const filteredData = loadOptionsBancos.cachedData.filter((item) =>
+        item.label.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData
     } catch (error) {
       console.error('Error cargando datos:', error)
       return []
     }
   }
 
-  const loadOptionsProveedores = async () => {
+  const loadOptionsProveedores = async (inputValue) => {
     try {
-      const response = await getProveedor()
-      const data = response.map((info) => ({
-        value: info.id,
-        label: info.nombre_empresa
-      }))
+      if (!loadOptionsProveedores.cachedData) {
+        const response = await getProveedor()
+        const data = response.map((info) => ({
+          value: info.id,
+          label: info.nombre_empresa
+        }))
 
-      if (data.length > 0) data.unshift({ label: 'Todos', value: 'todos' })
+        if (data.length > 0) data.unshift({ label: 'Todos', value: 'todos' })
 
-      return data
+        loadOptionsProveedores.cachedData = data
+      }
+
+      if (!inputValue) return loadOptionsProveedores.cachedData
+
+      const filteredData = loadOptionsProveedores.cachedData.filter((item) =>
+        item.label.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData
     } catch (error) {
       console.error('Error cargando datos:', error)
       return []
     }
   }
 
-  const loadOptionsGuardias = async () => {
+  const loadOptionsGuardias = async (inputValue) => {
     try {
-      const response = await getGuardias()
-      return response.map((data) => ({
+      if (!loadOptionsGuardias.cachedData) {
+        loadOptionsGuardias.cachedData = await getGuardias()
+      }
+
+      const filteredData = loadOptionsGuardias.cachedData.filter(
+        (g) =>
+          g.nombre_completo.toLowerCase().includes(inputValue.toLowerCase()) ||
+          g.numero_empleado.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
         value: data.id,
-        label: data.nombre_completo
+        label: `${data.nombre_completo} (${data.numero_empleado})`
       }))
     } catch (error) {
       console.error('Error cargando datos:', error)
@@ -121,53 +151,44 @@ export const useReportes = () => {
     }
   }
 
-  const loadOptionsGuardiasTodos = async () => {
+  const loadOptionsGuardiasTodos = async (inputValue) => {
     try {
-      const response = await getGuardias()
-      const data = response.map((data) => ({
-        value: data.id,
-        label: data.nombre_completo
-      }))
+      if (!loadOptionsGuardiasTodos.cachedData) {
+        const response = await getGuardias()
+        const data = response.map((data) => ({
+          value: data.id,
+          label: data.nombre_completo
+        }))
 
-      if (data.length > 0) data.unshift({ label: 'Todos', value: 'todos' })
-      return data
+        if (data.length > 0) data.unshift({ label: 'Todos', value: 'todos' })
+
+        loadOptionsGuardiasTodos.cachedData = data
+      }
+
+      if (!inputValue) return loadOptionsGuardiasTodos.cachedData
+
+      const filteredData = loadOptionsGuardiasTodos.cachedData.filter((item) =>
+        item.label.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData
     } catch (error) {
       console.error('Error cargando datos:', error)
       return []
     }
   }
 
-  const loadOptionsProveedoresUnico = async () => {
+  const loadOptionsProveedoresUnico = async (inputValue) => {
     try {
-      const response = await getProveedor()
-      return response.map((info) => ({
-        value: info.id,
-        label: info.nombre_empresa
-      }))
-    } catch (error) {
-      console.error('Error cargando datos:', error)
-      return []
-    }
-  }
+      if (!loadOptionsProveedoresUnico.cachedData) {
+        loadOptionsProveedoresUnico.cachedData = await getProveedor()
+      }
 
-  const loadOptionsBancosUnico = async () => {
-    try {
-      const response = await getBanco()
-      return response.map((info) => ({
-        value: info.id,
-        label: info.nombre
-      }))
-    } catch (error) {
-      console.error('Error cargando datos:', error)
-      return []
-    }
-  }
+      const filteredData = loadOptionsProveedoresUnico.cachedData.filter((g) =>
+        g.nombre_empresa.toLowerCase().includes(inputValue.toLowerCase())
+      )
 
-  const loadOptionsClientes = async () => {
-    try {
-      const response = await getCliente()
-
-      return response.map((data) => ({
+      return filteredData.map((data) => ({
         value: data.id,
         label: data.nombre_empresa
       }))
@@ -177,16 +198,67 @@ export const useReportes = () => {
     }
   }
 
-  const loadOptionsVehiculos = async () => {
+  const loadOptionsBancosUnico = async (inputValue) => {
     try {
-      const response = await getVehiculo()
-      const data = response.map((data) => ({
-        value: data.id,
-        label: `${data.tipo_vehiculo} (${data.placas})`
-      }))
+      if (!loadOptionsBancosUnico.cachedData) {
+        loadOptionsBancosUnico.cachedData = await getBanco()
+      }
 
-      if (data.length > 0) data.unshift({ label: 'Todos', value: 'todos' })
-      return data
+      const filteredData = loadOptionsBancosUnico.cachedData.filter((g) =>
+        g.nombre.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
+        value: data.id,
+        label: data.nombre
+      }))
+    } catch (error) {
+      console.error('Error cargando datos:', error)
+      return []
+    }
+  }
+
+  const loadOptionsClientes = async (inputValue) => {
+    try {
+      if (!loadOptionsClientes.cachedData) {
+        loadOptionsClientes.cachedData = await getCliente()
+      }
+
+      const filteredData = loadOptionsClientes.cachedData.filter((g) =>
+        g.nombre_empresa.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData.map((data) => ({
+        value: data.id,
+        label: data.nombre_empresa
+      }))
+    } catch (error) {
+      console.error('Error cargando datos:', error)
+      return []
+    }
+  }
+
+  const loadOptionsVehiculos = async (inputValue) => {
+    try {
+      if (!loadOptionsVehiculos.cachedData) {
+        const response = await getVehiculo()
+        const data = response.map((data) => ({
+          value: data.id,
+          label: `${data.tipo_vehiculo} (${data.placas})`
+        }))
+
+        if (data.length > 0) data.unshift({ label: 'Todos', value: 'todos' })
+
+        loadOptionsVehiculos.cachedData = data
+      }
+
+      if (!inputValue) return loadOptionsVehiculos.cachedData
+
+      const filteredData = loadOptionsVehiculos.cachedData.filter((item) =>
+        item.label.toLowerCase().includes(inputValue.toLowerCase())
+      )
+
+      return filteredData
     } catch (error) {
       console.error('Error cargando datos:', error)
       return []
@@ -459,6 +531,11 @@ export const useReportes = () => {
     setEstado(data)
   }
 
+  const generateHorasTrabajadasGuardia = async (form) => {
+    const data = await getHorasTrabajadasGuardia(form)
+    setEstado(data)
+  }
+
   const generateEstadoCuentaCliente = async (form) => {
     const data = await getEstadoCuentaCliente(form)
     setEstado(data)
@@ -681,6 +758,7 @@ export const useReportes = () => {
     generateEstadoCuentaGuardia,
     generateEstadoCuentaCliente,
     generateEstadoCuentaProveedor,
-    generateEstadoCuentaBanco
+    generateEstadoCuentaBanco,
+    generateHorasTrabajadasGuardia
   }
 }

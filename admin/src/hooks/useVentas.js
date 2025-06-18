@@ -93,7 +93,8 @@ export const useVentas = () => {
 
     const newData = {
       ...formData,
-      cotizacion_id: formData.cotizacion_id.value
+      cotizacion_id: formData.cotizacion_id.value,
+      banco_id: formData.banco_id.value
     }
 
     if (modalType === 'add') {

@@ -36,12 +36,17 @@ export const getVenta = async () => {
           const fecha_vencimiento =
             venta.tipo_pago === 'Contado' ? null : venta.fecha_vencimiento
 
+          const banco_id = venta?.banco
+            ? { label: venta.banco.nombre, value: venta.banco.id }
+            : ''
+
           return {
             ...venta,
             cotizacion_id: {
               label: nombre_empresa,
               value: venta.cotizacion.id
             },
+            banco_id,
             sucursal: typeof nombre_empresa === 'string' ? nombre_empresa : '',
             total: `$${venta.total}`,
             cotizacion_aceptada,

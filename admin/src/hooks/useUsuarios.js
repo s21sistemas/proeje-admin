@@ -8,6 +8,7 @@ import {
   updateUsuario
 } from '../api/usuarios'
 import { toast } from 'sonner'
+import { usuarioSchema } from '../zod/schemas'
 
 export const useUsuarios = () => {
   // Store de modal
@@ -63,6 +64,17 @@ export const useUsuarios = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
+    // Validación con Zod
+    const parsed = usuarioSchema.safeParse(formData)
+
+    if (!parsed.success) {
+      const errors = parsed.error.flatten().fieldErrors
+      const firstError = Object.values(errors)[0][0]
+      toast.error(firstError)
+      return
+    }
+
     Swal.fire({
       title:
         '<h2 style="font-family: "sans-serif";">Guardando registro, por favor espere...</h2>',
@@ -76,7 +88,8 @@ export const useUsuarios = () => {
 
     const newData = {
       ...formData,
-      rol_id: formData.rol_id.value
+      rol_id: formData.rol_id.value,
+      supervisor_id: formData?.supervisor_id?.value || null
     }
 
     if (modalType === 'add') {

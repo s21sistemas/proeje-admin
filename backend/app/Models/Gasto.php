@@ -12,12 +12,22 @@ class Gasto extends Model
 
     protected $table = 'gastos';
 
-    protected $fillable = ['banco_id', 'concepto', 'metodo_pago', 'impuesto', 'subtotal', 'total'];
+    protected $fillable = ['banco_id', 'concepto', 'metodo_pago', 'impuesto', 'descuento_monto', 'subtotal', 'total', 'modulo_concepto_id', 'referencia'];
 
-    protected $hidden = ['banco_id'];
+    protected $hidden = ['banco_id', 'modulo_concepto_id'];
 
     public function banco()
     {
         return $this->belongsTo(Banco::class, 'banco_id');
+    }
+
+    public function modulo_concepto()
+    {
+        return $this->belongsTo(ModuloConcepto::class);
+    }
+
+    public function movimientosBancarios()
+    {
+        return $this->morphMany(MovimientoBancario::class, 'origen');
     }
 }

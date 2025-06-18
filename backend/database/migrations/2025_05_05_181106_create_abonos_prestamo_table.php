@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('abonos_prestamo', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('prestamo_id')->constrained()->onDelete('cascade');
+            $table->foreignId('prestamo_id')->constrained()->onDelete('restrict');
             $table->decimal('monto', 10, 2);
             $table->date('fecha');
             $table->enum('metodo_pago', ['Transferencia bancaria', 'Tarjeta de crédito/débito', 'Efectivo', 'Cheques', 'Descuento nómina', 'Otro']);

@@ -13,7 +13,9 @@ class VentaHistorial extends Model
     protected $table = 'ventas_historial';
 
     protected $fillable = [
+        'usuario_id',
         'venta_id',
+        'banco_id',
         'cotizacion_id',
         'numero_factura',
         'fecha_emision',
@@ -39,5 +41,15 @@ class VentaHistorial extends Model
     public function venta()
     {
         return $this->belongsTo(Venta::class, 'venta_id');
+    }
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class);
+    }
+
+    public function banco()
+    {
+        return $this->belongsTo(Banco::class, 'banco_id');
     }
 }

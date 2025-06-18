@@ -21,20 +21,18 @@ export const FormReporteSupervisor = () => {
             value={formData[name] || ''}
             onChange={handleInputChange}
             disabled={view}
-            classInput='md:col-span-3'
+            classInput='md:col-span-1'
           />
         ))}
 
-        {formData?.proyeccion?.length > 0 && (
-          <>
-            <div className='sm:col-span-6 md:col-span-2'>
-              <AlertaCard text='Proyecciones' />
-            </div>
+        {formData?.proyeccion && (
+          <div className='sm:col-span-6 md:col-span-2'>
+            <AlertaCard text='Proyecciones' />
 
             {formData?.proyeccion?.map((proyec, index) => (
               <div
                 key={`proyeccion-${index}`}
-                className='md:col-span-3 border border-gray-300 p-4 rounded-lg shadow-sm bg-white'
+                className='md:col-span-3 border border-gray-300 p-4 rounded-lg shadow-sm bg-white mt-3'
               >
                 <ul className='list-disc pl-5 text-sm text-gray-800'>
                   <li>
@@ -49,51 +47,52 @@ export const FormReporteSupervisor = () => {
                 </ul>
               </div>
             ))}
-          </>
+          </div>
         )}
 
         {formData?.consignas?.length > 0 && (
-          <>
-            <div className='sm:col-span-6 md:col-span-2'>
-              <AlertaCard text='Consignas' />
-            </div>
+          <div className='sm:col-span-6 md:col-span-2'>
+            <AlertaCard text='Consignas' />
 
             {formData?.consignas?.map((consigna, index) => (
               <div
-                key={`consignas-${index}`}
-                className='md:col-span-3 border border-gray-300 p-4 rounded-lg shadow-sm bg-white'
+                key={`consignas-${crypto.randomUUID()}`}
+                className='md:col-span-3 border border-gray-300 p-4 rounded-lg shadow-sm bg-white mt-3'
               >
-                <ul className='list-disc pl-5 text-sm text-gray-800'>
-                  <li>
-                    <strong>Consigna {index + 1}:</strong>{' '}
-                    {consigna?.texto ? consigna.texto : consigna}
+                <ul className='list-disc sm:pl-5 text-sm text-gray-800'>
+                  <li className='flex flex-col sm:list-item'>
+                    <span className='bg-[#3D90D7] text-white rounded-sm px-1.5 py-0.5'>
+                      {consigna.hora} hrs.
+                    </span>{' '}
+                    <strong>Consigna {index + 1}:</strong> {consigna.texto}
                   </li>
                 </ul>
               </div>
             ))}
-          </>
+          </div>
         )}
 
         {formData?.observaciones?.length > 0 && (
-          <>
-            <div className='sm:col-span-6 md:col-span-2'>
-              <AlertaCard text='Observaciones' />
-            </div>
+          <div className='sm:col-span-6 md:col-span-2'>
+            <AlertaCard text='Observaciones' />
 
             {formData?.observaciones?.map((observacion, index) => (
               <div
-                key={`observaciones-${index}`}
-                className='md:col-span-3 border border-gray-300 p-4 rounded-lg shadow-sm bg-white'
+                key={`observaciones-${crypto.randomUUID()}`}
+                className='md:col-span-3 border border-gray-300 p-4 rounded-lg shadow-sm bg-white mt-3'
               >
-                <ul className='list-disc pl-5 text-sm text-gray-800'>
-                  <li>
+                <ul className='list-disc sm:pl-5 text-sm text-gray-800'>
+                  <li className='flex flex-col sm:list-item'>
+                    <span className='bg-[#3D90D7] text-white rounded-sm px-1.5 py-0.5'>
+                      {observacion.hora} hrs.
+                    </span>{' '}
                     <strong>Observación {index + 1}:</strong>{' '}
-                    {observacion?.texto ? observacion.texto : observacion}
+                    {observacion.texto}
                   </li>
                 </ul>
               </div>
             ))}
-          </>
+          </div>
         )}
       </div>
       <hr className='text-gray-300' />

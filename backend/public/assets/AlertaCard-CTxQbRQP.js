@@ -1,1 +1,0 @@
-import{j as e}from"./index-CrpPZsvu.js";import{C as t}from"./circle-alert-DY7SbZfB.js";const o=({text:r})=>e.jsxs("div",{className:"bg-[#3674B5] font-semibold p-3 rounded-md text-white flex gap-1 items-center",children:[e.jsx(t,{}),e.jsx("h3",{children:r})]});export{o as A};

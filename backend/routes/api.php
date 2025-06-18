@@ -42,12 +42,18 @@ use App\Http\Controllers\EstadoCuentaController;
 use App\Http\Controllers\SucursalEmpresaController;
 use App\Http\Controllers\ModuloPrestamoController;
 use App\Http\Controllers\ModuloDescuentoController;
+use App\Http\Controllers\ModuloConceptoController;
 use App\Http\Controllers\BlackListController;
 use App\Http\Controllers\BoletaGasolinaController;
 use App\Http\Controllers\QRGeneradoController;
 use App\Http\Controllers\QRRecorridoGuardiaController;
 use App\Http\Controllers\PagoEmpleadoController;
 use App\Http\Controllers\CheckGuardiaController;
+use App\Http\Controllers\ReporteGuardiaController;
+use App\Http\Controllers\ReporteIncidenteGuardiaController;
+use App\Http\Controllers\ReporteSupervisorController;
+use App\Http\Controllers\ReportePatrullaController;
+use App\Http\Controllers\ReporteBitacoraController;
 
 /*
 |--------------------------------------------------------------------------
@@ -70,19 +76,38 @@ Route::get('guardias-app', [GuardiaController::class, 'getGuardiaApp']);
 Route::get('orden-servicio-app', [OrdenServicioController::class, 'ordenServicioGuardia']);
 Route::apiResource('recorridos-guardia', QRRecorridoGuardiaController::class);
 Route::get('qr-validar/{uuid}', [QRRecorridoGuardiaController::class, 'validar']);
+Route::apiResource('check-guardia', CheckGuardiaController::class);
+Route::get('/check-guardia/abierto/{guardiaId}', [CheckGuardiaController::class, 'ultimoCheckAbierto']);
+Route::post('/check-guardia-eventual', [CheckGuardiaController::class, 'createGuardiaEventual']);
+Route::get('/check-guardia-eventual/abierto/{nombreGuardia}', [CheckGuardiaController::class, 'ultimoCheckAbiertoEventual']);
+Route::apiResource('reporte-guardia', ReporteGuardiaController::class);
+Route::apiResource('reporte-supervisor', ReporteSupervisorController::class);
+Route::apiResource('reporte-incidente-guardia', ReporteIncidenteGuardiaController::class);
+Route::apiResource('reporte-patrullas', ReportePatrullaController::class);
+Route::apiResource('reporte-bitacoras', ReporteBitacoraController::class);
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::apiResource('perfil', PerfilController::class)->only(['index']);
+    Route::apiResource('perfil', PerfilController::class)->only(['index', 'update']);
 });
 
 Route::get('count-adminpage', [CountPageController::class, 'getCount']);
 
 // Modulos de la API (rutas protegidas)
-// Route::middleware(['auth:sanctum', 'permiso.dinamico'])->group(function () {
+Route::middleware(['auth:sanctum', 'permiso.dinamico'])->group(function () {
+    // Rutas de la app por separado
+    Route::apiResource('check-guardia', CheckGuardiaController::class)->only(['index']);
+    Route::apiResource('reporte-bitacoras', ReporteBitacoraController::class)->only(['index']);
+    Route::apiResource('reporte-incidente-guardia', ReporteIncidenteGuardiaController::class)->only(['index']);
+    Route::apiResource('reporte-guardia', ReporteGuardiaController::class)->only(['index']);
+    Route::apiResource('reporte-supervisor', ReporteSupervisorController::class)->only(['index']);
+    Route::apiResource('reporte-patrullas', ReportePatrullaController::class)->only(['index']);
+    Route::apiResource('recorridos-guardia', QRRecorridoGuardiaController::class)->only(['index']);
+
     Route::apiResource('roles', RolController::class);
     Route::apiResource('usuarios', UsuarioController::class);
     Route::apiResource('modulos', ModuloController::class);
     Route::apiResource('guardias', GuardiaController::class);
+    Route::get('supervisores', [GuardiaController::class, 'getSupervisores']);
     Route::apiResource('sucursales-empresa', SucursalEmpresaController::class);
     Route::get('guardias-asignado', [GuardiaController::class, 'guardiaAsignado']);
     Route::get('guardias-sucursal', [GuardiaController::class, 'getGuardiaBySucursal']);
@@ -99,6 +124,7 @@ Route::get('count-adminpage', [CountPageController::class, 'getCount']);
     Route::apiResource('pagos-empleados', PagoEmpleadoController::class);
     Route::apiResource('modulo-prestamos', ModuloPrestamoController::class);
     Route::apiResource('modulo-descuentos', ModuloDescuentoController::class);
+    Route::apiResource('modulo-conceptos', ModuloConceptoController::class);
     Route::get('prestamos-pendientes', [PrestamoController::class, 'prestamosPendientes']);
     Route::get('generar-estadocuenta-guardia', [EstadoCuentaController::class, 'generarEstadoCuentaGuardia']);
     Route::apiResource('abonos-prestamo', AbonoPrestamoController::class);
@@ -137,7 +163,7 @@ Route::get('count-adminpage', [CountPageController::class, 'getCount']);
     Route::apiResource('cartera-vencida', ReporteCarteraVencidaController::class);
     Route::apiResource('logs', LogController::class);
     Route::apiResource('generar-qr', QRGeneradoController::class);
-    Route::apiResource('check-guardia', CheckGuardiaController::class);
-    Route::get('/check-guardia/abierto/{guardiaId}', [CheckGuardiaController::class, 'ultimoCheckAbierto']);
-
-// });
+    Route::get('generar-horastrabajadas-guardia', [CheckGuardiaController::class, 'reporteHorasTrabajadas']);
+    Route::get('ventas-ingresos-mensuales', [VentaController::class, 'ingresosMensuales']);
+    Route::get('ventas-egresos-mensuales', [MovimientoBancarioController::class, 'egresosMensuales']);
+});

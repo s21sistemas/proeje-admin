@@ -39,12 +39,14 @@ class CotizacionFactory extends Factory
             'credito_dias' => $this->faker->numberBetween(0, 30),
             'descuento_porcentaje' => $this->faker->optional()->randomFloat(2, 0, 20),
 
-            'fecha_servicio' => $this->faker->date(),
+            'fecha_servicio' => $this->faker->dateTimeBetween('-150 days', 'now')->format('Y-m-d'),
             'servicios' => $this->faker->sentence,
             'guardias_dia' => $this->faker->numberBetween(1, 10),
             'precio_guardias_dia' => $this->faker->randomFloat(2, 300, 500),
+            'precio_guardias_dia_total' => $this->faker->randomFloat(2, 300, 500),
             'guardias_noche' => $this->faker->numberBetween(1, 10),
             'precio_guardias_noche' => $this->faker->randomFloat(2, 400, 600),
+            'precio_guardias_noche_total' => $this->faker->randomFloat(2, 400, 600),
             'cantidad_guardias' => $this->faker->numberBetween(1, 20),
 
             'jefe_turno' => $jefe_turno,

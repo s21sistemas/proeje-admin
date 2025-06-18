@@ -4,8 +4,13 @@ import { useTable } from '../hooks/useTable'
 import { useLocation } from 'react-router'
 import { useEffect } from 'react'
 import { useReportes } from '../hooks/useReportes'
+import { useAuth } from '../context/AuthContext'
+import { hasPermission } from '../helpers/permissions'
+import { EXCLUDE_CREATE } from '../routes/exclusiones'
+import { isExcluded } from '../utils/routeUtils'
 
 export const SearchBar = ({ title, data }) => {
+  const { user } = useAuth()
   const { generateReportCartera } = useReportes()
   const { search, pathname } = useLocation()
   const { openModal } = useModal()
@@ -48,18 +53,8 @@ export const SearchBar = ({ title, data }) => {
             className='block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
           />
         </div>
-        {pathname !== '/compras' &&
-          pathname !== '/almacen' &&
-          pathname !== '/ventas-historial' &&
-          pathname !== '/asignamiento-historial' &&
-          pathname !== '/reporte-cartera-vencida' &&
-          pathname !== '/logs' &&
-          pathname !== '/recorridos' &&
-          pathname !== '/guardias-check' &&
-          pathname !== '/bitacoras-guardia' &&
-          pathname !== '/reporte-incidentes' &&
-          pathname !== '/reporte-guardias' &&
-          pathname !== '/reporte-supervisores' && (
+        {hasPermission(user, pathname, 'crear') &&
+          !isExcluded(pathname, EXCLUDE_CREATE) && (
             <button
               onClick={() => openModal('add')}
               className='cursor-pointer flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'

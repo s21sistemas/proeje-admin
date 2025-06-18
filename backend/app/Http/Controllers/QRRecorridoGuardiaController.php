@@ -7,6 +7,7 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Models\QRPuntoRecorrido;
 use App\Models\QRRecorridoGuardia;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class QRRecorridoGuardiaController extends Controller
@@ -14,15 +15,26 @@ class QRRecorridoGuardiaController extends Controller
     //  * Mostrar todos los registros.
     public function index()
     {
-        $registros = QRRecorridoGuardia::select('qr_recorridos_guardia.*')
+        $usuario = Auth::user();
+
+        $query = QRRecorridoGuardia::with([
+                'guardia',
+                'punto.qr_generado.orden_servicio.guardias'
+            ])
             ->join('qr_puntos_recorrido as puntos', 'qr_recorridos_guardia.qr_punto_id', '=', 'puntos.id')
             ->join('qrs_generados as generados', 'puntos.qr_generado_id', '=', 'generados.id')
             ->join('ordenes_servicios as ordenes', 'generados.orden_servicio_id', '=', 'ordenes.id')
-            ->with(['guardia', 'punto.qr_generado.orden_servicio'])
-            ->orderBy('ordenes.codigo_orden_servicio', 'asc')
-            ->get();
+            ->select('qr_recorridos_guardia.*')
+            ->orderBy('ordenes.codigo_orden_servicio', 'asc');
 
-        return response()->json($registros);
+        // Si el usuario tiene guardia_id, filtrar por la asignación en la orden de servicio
+        if ($usuario->guardia_id) {
+            $query->whereHas('punto.qr_generado.orden_servicio.guardias', function($q) use ($usuario) {
+                $q->where('guardias.id', $usuario->guardia_id);
+            });
+        }
+
+        return response()->json($query->get());
     }
 
     //  * Crear un nuevo registro.

@@ -68,11 +68,12 @@ export const routes = [
     label: 'Reporte servicios',
     Icon: ShieldCheck,
     children: [
-      { path: '/guardias-check', label: 'Guardias check' },
-      { path: '/bitacoras-guardia', label: 'Bitácoras' },
-      { path: '/reporte-incidentes', label: 'Incidentes' },
-      { path: '/reporte-guardias', label: 'Reporte guardias' },
-      { path: '/reporte-supervisores', label: 'Reporte supervisores' },
+      { path: '/check-guardia', label: 'Check-in/out' },
+      { path: '/reporte-bitacoras', label: 'Bitácoras' },
+      { path: '/reporte-incidente-guardia', label: 'Incidentes' },
+      { path: '/reporte-guardia', label: 'Guardias' },
+      { path: '/reporte-supervisor', label: 'Supervisores' },
+      { path: '/reporte-patrullas', label: 'Patrullas' },
       { path: '/recorridos-guardia', label: 'Recorridos' }
     ]
   },
@@ -117,6 +118,7 @@ export const routes = [
     label: 'Operaciones',
     Icon: ArrowRightLeft,
     children: [
+      { path: '/modulo-conceptos', label: 'Tipos de concepto' },
       { path: '/ordenes-compra', label: 'Ordenes de compra' },
       { path: '/compras', label: 'Compras' },
       { path: '/gastos', label: 'Gastos' }

@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('almacen_entradas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('guardia_id')->nullable()->constrained('guardias')->onDelete('cascade');
-            $table->foreignId('articulo_id')->constrained('articulos')->onDelete('cascade');
+            $table->foreignId('guardia_id')->nullable()->constrained('guardias')->onDelete('restrict');
+            $table->foreignId('articulo_id')->constrained('articulos')->onDelete('restrict');
             $table->string('numero_serie');
             $table->date('fecha_entrada');
             $table->enum('tipo_entrada', ['Compra', 'Devolución de guardia', 'Cambio de equipo', 'Reparación terminada', 'Otro']);

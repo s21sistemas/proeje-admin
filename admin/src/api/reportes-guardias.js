@@ -1,32 +1,41 @@
-import { collection, onSnapshot } from 'firebase/firestore'
-import { db } from './db/firebaseConfig'
 import dayjs from 'dayjs'
+import { apiClient } from './configAxios'
 
-// Obtener registro
-export const getReportesGuardia = () => {
-  return new Promise((resolve) => {
-    const unsubscribe = onSnapshot(
-      collection(db, 'reportesGuardia'),
-      (snapshot) => {
-        const data = snapshot.docs.map((doc) => {
-          const equipo_completo = doc.data().equipo
+// Leer registros
+export const getReporteGuardia = async () => {
+  try {
+    const response = await apiClient.get('reporte-guardia')
+    const { data } = response
+    return data.map((check) => {
+      const guardia = `${check.guardia.nombre} ${check.guardia.apellido_p} (${check.guardia.numero_empleado})`
 
-          // mapear objeto, solo que sean true, y devolver solo las keys
-          const equipo = Object.entries(equipo_completo)
-            .filter(([, value]) => value === true)
-            .map(([key]) => key)
+      const equipo = []
+      Object.entries(check.equipo).forEach(([key, value]) => {
+        if (value) equipo.push(key)
+      })
 
-          return {
-            id: doc.id,
-            ...doc.data(),
-            fecha: dayjs(doc.data().fecha).format('YYYY-MM-DD'),
-            fecha_format: dayjs(doc.data().fecha).format('DD/MM/YYYY'),
-            guardia: `${doc.data().nombreEmpleado} (${doc.data().empleadoId})`,
-            equipo: equipo.join(', ')
-          }
-        })
-        resolve({ data, unsubscribe }) // devolvemos la función unsubscribe también
+      return {
+        ...check,
+        nombre: guardia,
+        quien_entrega: guardia,
+        orden: check.orden_servicio.codigo_orden_servicio,
+        fecha_format: dayjs(check.fecha).format('DD/MM/YYYY hh:mm:ss A'),
+        equipo_entregado: equipo.join(', ')
       }
-    )
-  })
+    })
+  } catch (error) {
+    console.error('Error al obetener el registro', error)
+    throw new Error(error.response.data.message)
+  }
+}
+
+// Eliminar un registro
+export const removeReporteGuardia = async (id) => {
+  try {
+    const response = await apiClient.delete(`reporte-guardia/${id}`)
+    return response.data
+  } catch (error) {
+    console.error('Error al eliminar registro:', error)
+    throw new Error(error.response.data.message)
+  }
 }

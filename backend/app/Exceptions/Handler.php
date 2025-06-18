@@ -2,6 +2,8 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Database\QueryException;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -46,5 +48,18 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+    }
+
+    public function render($request, Throwable $exception)
+    {
+        if ($exception instanceof QueryException) {
+            if ($exception->getCode() === '23000' && $exception->errorInfo[1] == 1451) {
+                return response()->json([
+                    'message' => 'No se puede eliminar este registro porque tiene otros registros asociados.'
+                ], SymfonyResponse::HTTP_CONFLICT); // 409
+            }
+        }
+
+        return parent::render($request, $exception);
     }
 }

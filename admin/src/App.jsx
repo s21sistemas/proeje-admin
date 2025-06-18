@@ -58,15 +58,21 @@ const PagosEmpleadosPage = lazy(() => import('./pages/PagosEmpleadosPage'))
 
 const ModuloPrestamosPage = lazy(() => import('./pages/ModuloPrestamosPage'))
 const ModuloDescuentosPage = lazy(() => import('./pages/ModuloDescuentosPage'))
+const ModuloConceptosPage = lazy(() => import('./pages/ModuloConceptosPage'))
 
-const GuardiasCheckPage = lazy(() => import('./pages/GuardiasCheckPage'))
-const BitacorasPage = lazy(() => import('./pages/BitacorasPage'))
-const ReporteIncidentesPage = lazy(() =>
-  import('./pages/ReporteIncidentesPage')
+const CheckGuardiasPage = lazy(() => import('./pages/CheckGuardiasPage'))
+const ReportesBitacorasPage = lazy(() =>
+  import('./pages/ReportesBitacorasPage')
+)
+const ReportesIncidentesGuardiaPage = lazy(() =>
+  import('./pages/ReportesIncidentesGuardiaPage')
 )
 const ReporteGuardiasPage = lazy(() => import('./pages/ReporteGuardiasPage'))
 const ReporteSupervisoresPage = lazy(() =>
   import('./pages/ReporteSupervisoresPage')
+)
+const ReportesPatrullasPage = lazy(() =>
+  import('./pages/ReportesPatrullasPage')
 )
 
 const EstadoCuentaGuardiaPage = lazy(() =>
@@ -117,119 +123,425 @@ export default function App() {
 
                 <Route
                   path='/sucursales-empresa'
-                  element={<SucursalesEmpresaPage />}
+                  element={
+                    <PrivateRoute>
+                      <SucursalesEmpresaPage />
+                    </PrivateRoute>
+                  }
                 />
-                <Route path='/guardias' element={<GuardiasPage />} />
-                <Route path='/equipo' element={<EquipamientoPage />} />
-                <Route path='/blacklist' element={<BlackListPage />} />
-                <Route path='/incapacidades' element={<IncapacidadesPage />} />
-                <Route path='/tiempo-extra' element={<TiempoExtraPage />} />
-                <Route path='/faltas' element={<FaltasPage />} />
-                <Route path='/descuentos' element={<DescuentosPage />} />
-                <Route path='/vacaciones' element={<VacacionesPage />} />
-                <Route path='/prestamos' element={<PrestamosPage />} />
+                <Route
+                  path='/guardias'
+                  element={
+                    <PrivateRoute>
+                      <GuardiasPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/equipo'
+                  element={
+                    <PrivateRoute>
+                      <EquipamientoPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/blacklist'
+                  element={
+                    <PrivateRoute>
+                      <BlackListPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/incapacidades'
+                  element={
+                    <PrivateRoute>
+                      <IncapacidadesPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/tiempo-extra'
+                  element={
+                    <PrivateRoute>
+                      <TiempoExtraPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/faltas'
+                  element={
+                    <PrivateRoute>
+                      <FaltasPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/descuentos'
+                  element={
+                    <PrivateRoute>
+                      <DescuentosPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/vacaciones'
+                  element={
+                    <PrivateRoute>
+                      <VacacionesPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/prestamos'
+                  element={
+                    <PrivateRoute>
+                      <PrestamosPage />
+                    </PrivateRoute>
+                  }
+                />
                 <Route
                   path='/abonos-prestamo'
-                  element={<AbonosPrestamosPage />}
+                  element={
+                    <PrivateRoute>
+                      <AbonosPrestamosPage />
+                    </PrivateRoute>
+                  }
                 />
                 <Route
                   path='/pagos-empleados'
-                  element={<PagosEmpleadosPage />}
+                  element={
+                    <PrivateRoute>
+                      <PagosEmpleadosPage />
+                    </PrivateRoute>
+                  }
                 />
                 <Route
                   path='/estadocuenta-guardias'
-                  element={<EstadoCuentaGuardiaPage />}
+                  element={
+                    <PrivateRoute>
+                      <EstadoCuentaGuardiaPage />
+                    </PrivateRoute>
+                  }
                 />
-                <Route path='/reportes-guardias' element={<ReportesRHPage />} />
+                <Route
+                  path='/reportes-guardias'
+                  element={
+                    <PrivateRoute>
+                      <ReportesRHPage />
+                    </PrivateRoute>
+                  }
+                />
                 <Route
                   path='/modulo-prestamos'
-                  element={<ModuloPrestamosPage />}
+                  element={
+                    <PrivateRoute>
+                      <ModuloPrestamosPage />
+                    </PrivateRoute>
+                  }
                 />
                 <Route
                   path='/modulo-descuentos'
-                  element={<ModuloDescuentosPage />}
+                  element={
+                    <PrivateRoute>
+                      <ModuloDescuentosPage />
+                    </PrivateRoute>
+                  }
                 />
-                <Route path='/clientes' element={<ClientesPage />} />
+                <Route
+                  path='/clientes'
+                  element={
+                    <PrivateRoute>
+                      <ClientesPage />
+                    </PrivateRoute>
+                  }
+                />
                 <Route
                   path='/estadocuenta-clientes'
-                  element={<EstadoCuentaClientePage />}
-                />
-                <Route path='/sucursales' element={<SucursalesPage />} />
-                <Route path='/proveedores' element={<ProveedoresPage />} />
-                <Route path='/guardias-check' element={<GuardiasCheckPage />} />
-                <Route path='/bitacoras-guardia' element={<BitacorasPage />} />
-                <Route
-                  path='/reporte-incidentes'
-                  element={<ReporteIncidentesPage />}
+                  element={
+                    <PrivateRoute>
+                      <EstadoCuentaClientePage />
+                    </PrivateRoute>
+                  }
                 />
                 <Route
-                  path='/reporte-guardias'
-                  element={<ReporteGuardiasPage />}
+                  path='/sucursales'
+                  element={
+                    <PrivateRoute>
+                      <SucursalesPage />
+                    </PrivateRoute>
+                  }
                 />
                 <Route
-                  path='/reporte-supervisores'
-                  element={<ReporteSupervisoresPage />}
+                  path='/proveedores'
+                  element={
+                    <PrivateRoute>
+                      <ProveedoresPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/check-guardia'
+                  element={
+                    <PrivateRoute>
+                      <CheckGuardiasPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/reporte-bitacoras'
+                  element={
+                    <PrivateRoute>
+                      <ReportesBitacorasPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/reporte-incidente-guardia'
+                  element={
+                    <PrivateRoute>
+                      <ReportesIncidentesGuardiaPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/reporte-guardia'
+                  element={
+                    <PrivateRoute>
+                      <ReporteGuardiasPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/reporte-supervisor'
+                  element={
+                    <PrivateRoute>
+                      <ReporteSupervisoresPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/reporte-patrullas'
+                  element={
+                    <PrivateRoute>
+                      <ReportesPatrullasPage />
+                    </PrivateRoute>
+                  }
                 />
                 <Route
                   path='/estadocuenta-proveedores'
-                  element={<EstadoCuentaProveedorPage />}
+                  element={
+                    <PrivateRoute>
+                      <EstadoCuentaProveedorPage />
+                    </PrivateRoute>
+                  }
                 />
-                <Route path='/cotizaciones' element={<CotizacionesPage />} />
-                <Route path='/ventas' element={<VentasPage />} />
+                <Route
+                  path='/cotizaciones'
+                  element={
+                    <PrivateRoute>
+                      <CotizacionesPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/ventas'
+                  element={
+                    <PrivateRoute>
+                      <VentasPage />
+                    </PrivateRoute>
+                  }
+                />
                 <Route
                   path='/orden-servicio'
-                  element={<OrdenesServiciosPage />}
+                  element={
+                    <PrivateRoute>
+                      <OrdenesServiciosPage />
+                    </PrivateRoute>
+                  }
                 />
-                <Route path='/generar-qr' element={<GenerarQRSPage />} />
+                <Route
+                  path='/generar-qr'
+                  element={
+                    <PrivateRoute>
+                      <GenerarQRSPage />
+                    </PrivateRoute>
+                  }
+                />
                 <Route
                   path='/recorridos-guardia'
-                  element={<RecorridosGuardiaPage />}
+                  element={
+                    <PrivateRoute>
+                      <RecorridosGuardiaPage />
+                    </PrivateRoute>
+                  }
                 />
-                <Route path='/vehiculos' element={<VehiculosPage />} />
+                <Route
+                  path='/vehiculos'
+                  element={
+                    <PrivateRoute>
+                      <VehiculosPage />
+                    </PrivateRoute>
+                  }
+                />
                 <Route
                   path='/boletas-gasolina'
                   element={<BoletasGasolinaPage />}
                 />
-                <Route path='/articulos' element={<ArticulosPage />} />
-                <Route path='/almacen' element={<AlmacenPage />} />
+                <Route
+                  path='/articulos'
+                  element={
+                    <PrivateRoute>
+                      <ArticulosPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/almacen'
+                  element={
+                    <PrivateRoute>
+                      <AlmacenPage />
+                    </PrivateRoute>
+                  }
+                />
                 <Route
                   path='/almacen-entradas'
-                  element={<AlmacenEntradasPage />}
+                  element={
+                    <PrivateRoute>
+                      <AlmacenEntradasPage />
+                    </PrivateRoute>
+                  }
                 />
                 <Route
                   path='/almacen-salidas'
-                  element={<AlmacenSalidasPage />}
+                  element={
+                    <PrivateRoute>
+                      <AlmacenSalidasPage />
+                    </PrivateRoute>
+                  }
                 />
-                <Route path='/bancos' element={<BancosPage />} />
+                <Route
+                  path='/bancos'
+                  element={
+                    <PrivateRoute>
+                      <BancosPage />
+                    </PrivateRoute>
+                  }
+                />
                 <Route
                   path='/movimientos-bancarios'
-                  element={<MovimientosBancariosPage />}
+                  element={
+                    <PrivateRoute>
+                      <MovimientosBancariosPage />
+                    </PrivateRoute>
+                  }
                 />
                 <Route
                   path='/estadocuenta-bancos'
-                  element={<EstadoCuentaBancoPage />}
+                  element={
+                    <PrivateRoute>
+                      <EstadoCuentaBancoPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/modulo-conceptos'
+                  element={
+                    <PrivateRoute>
+                      <ModuloConceptosPage />
+                    </PrivateRoute>
+                  }
                 />
                 <Route
                   path='/ordenes-compra'
-                  element={<OrdenesComprasPage />}
+                  element={
+                    <PrivateRoute>
+                      <OrdenesComprasPage />
+                    </PrivateRoute>
+                  }
                 />
-                <Route path='/compras' element={<ComprasPage />} />
-                <Route path='/gastos' element={<GastosPage />} />
-                <Route path='/generador-reportes' element={<ReportesPage />} />
+                <Route
+                  path='/compras'
+                  element={
+                    <PrivateRoute>
+                      <ComprasPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/gastos'
+                  element={
+                    <PrivateRoute>
+                      <GastosPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/generador-reportes'
+                  element={
+                    <PrivateRoute>
+                      <ReportesPage />
+                    </PrivateRoute>
+                  }
+                />
                 <Route
                   path='/cartera-vencida'
-                  element={<ReporteCarteraVencidaPage />}
+                  element={
+                    <PrivateRoute>
+                      <ReporteCarteraVencidaPage />
+                    </PrivateRoute>
+                  }
                 />
-                <Route path='/usuarios' element={<UsuariosPage />} />
-                <Route path='/roles' element={<RolesPage />} />
-                <Route path='/modulos' element={<ModulosPage />} />
-                <Route path='/logs' element={<LogsPage />} />
+                <Route
+                  path='/usuarios'
+                  element={
+                    <PrivateRoute>
+                      <UsuariosPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/roles'
+                  element={
+                    <PrivateRoute>
+                      <RolesPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/modulos'
+                  element={
+                    <PrivateRoute>
+                      <ModulosPage />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path='/logs'
+                  element={
+                    <PrivateRoute>
+                      <LogsPage />
+                    </PrivateRoute>
+                  }
+                />
                 <Route
                   path='/ventas-historial'
-                  element={<VentasHistorialPage />}
+                  element={
+                    <PrivateRoute>
+                      <VentasHistorialPage />
+                    </PrivateRoute>
+                  }
                 />
 
-                <Route path='/perfil' element={<PerfilPage />} />
+                <Route
+                  path='/perfil'
+                  element={
+                    <PrivateRoute>
+                      <PerfilPage />
+                    </PrivateRoute>
+                  }
+                />
                 <Route path='/login' element={<Navigate to='/' />} />
               </Routes>
             </main>

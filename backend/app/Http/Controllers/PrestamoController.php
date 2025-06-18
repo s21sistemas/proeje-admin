@@ -40,7 +40,10 @@ class PrestamoController extends Controller
 
     public function update(Request $request, $id)
     {
-        $prestamo = Prestamo::findOrFail($id);
+        $prestamo = Prestamo::find($id);
+        if (!$prestamo) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
 
         $data = $request->validate([
             'numero_pagos' => 'sometimes|integer|min:1',
@@ -55,9 +58,14 @@ class PrestamoController extends Controller
 
     public function destroy($id)
     {
-        $prestamo = Prestamo::findOrFail($id);
-        $prestamo->delete();
+        $registro = Prestamo::find($id);
 
-        return response()->json(['message' => 'Registro eliminado']);
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
+
+        $registro->delete();
+
+        return response()->json(['message' => 'Registro eliminado con éxito']);
     }
 }

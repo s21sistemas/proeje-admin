@@ -149,7 +149,7 @@
                     @foreach($data['gastos'] as $gasto)
                         <tr>
                             <td>{{ Carbon::parse($gasto['created_at'])->format('d/m/Y') }}</td>
-                            <td>{{ $gasto['concepto'] }}</td>
+                            <td>{{ $gasto['modulo_concepto']['nombre'] }}</td>
                             <td>{{ $gasto['metodo_pago'] }}</td>
                             <td>${{ number_format($gasto['subtotal'], 2) }}</td>
                             <td>{{ $gasto['impuesto'] ? 'Sí' : 'No' }}</td>
@@ -160,6 +160,38 @@
             </table>
         @else
             <p>No hay gastos en este periodo.</p>
+        @endif
+    </div>
+
+    <div class="section">
+        <h3>Ventas</h3>
+        @if(count($data['ventas']) > 0)
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Sucursal</th>
+                        <th>Factura</th>
+                        <th>Nota de crédito</th>
+                        <th>Método de pago</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($data['ventas'] as $venta)
+                        <tr>
+                            <td>{{ Carbon::parse($venta['created_at'])->format('d/m/Y') }}</td>
+                            <td>{{ $venta['cotizacion']['sucursal']['nombre_empresa'] ?? $venta['cotizacion']['nombre_empresa'] ?? 'Sin sucursal' }}</td>
+                            <td>{{ $venta['numero_factura'] }}</td>
+                            <td>${{ number_format($venta['nota_credito'], 2) }}</td>
+                            <td>{{ $venta['metodo_pago'] }}</td>
+                            <td>${{ number_format($venta['total'], 2) }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <p>No hay ventas en este periodo.</p>
         @endif
     </div>
 

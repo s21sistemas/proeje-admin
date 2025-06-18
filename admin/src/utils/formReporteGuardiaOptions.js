@@ -4,44 +4,14 @@ export const formOptions = {
       required: false,
       type: 'text',
       label: 'Orden de servicio',
-      name: 'idServicio'
+      name: 'orden'
     },
-    { required: false, type: 'text', label: 'Guardia', name: 'nombreEmpleado' },
+    { required: false, type: 'text', label: 'Guardia', name: 'nombre' },
     {
       required: false,
       type: 'text',
-      label: 'No. empleado',
-      name: 'empleadoId'
-    },
-    {
-      required: false,
-      type: 'text',
-      label: 'Supervisor',
-      name: 'supervisor'
-    },
-    {
-      required: false,
-      type: 'text',
-      label: 'Elemento que recibe el uniforme',
-      name: 'elementoRecibe'
-    },
-    {
-      required: false,
-      type: 'text',
-      label: 'Elemento que entrega el uniforme',
-      name: 'elementoEntrega'
-    },
-    {
-      required: false,
-      type: 'date',
-      label: 'Fecha',
-      name: 'fecha'
-    },
-    {
-      required: false,
-      type: 'textarea',
-      label: 'Equipo',
-      name: 'equipo'
+      label: 'Punto de vigilancia',
+      name: 'punto_vigilancia'
     },
     {
       required: false,
@@ -52,8 +22,26 @@ export const formOptions = {
     {
       required: false,
       type: 'text',
-      label: 'Punto de vigilancia',
-      name: 'puntoVigilancia'
+      label: 'Elemento que entrega el equipo',
+      name: 'quien_entrega'
+    },
+    {
+      required: false,
+      type: 'text',
+      label: 'Elemento que recibe el equipo',
+      name: 'quien_recibe'
+    },
+    {
+      required: false,
+      type: 'text',
+      label: 'Equipo entregado',
+      name: 'equipo_entregado'
+    },
+    {
+      required: false,
+      type: 'datetime-local',
+      label: 'Fecha y hora del reporte',
+      name: 'fecha'
     }
   ]
 }

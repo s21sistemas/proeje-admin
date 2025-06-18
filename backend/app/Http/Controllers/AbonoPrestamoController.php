@@ -23,7 +23,11 @@ class AbonoPrestamoController extends Controller
             'observaciones' => 'nullable|string',
         ]);
 
-        $prestamo = Prestamo::findOrFail($data['prestamo_id']);
+        $prestamo = Prestamo::find($request->prestamo_id);
+
+        if (!$prestamo) {
+            return response()->json(['error' => 'Prestamo no encontrado'], 404);
+        }
 
         if ($data['monto'] > $prestamo->saldo_restante) {
             return response()->json(['message' => 'El abono excede el saldo pendiente.'], 422);
@@ -50,7 +54,10 @@ class AbonoPrestamoController extends Controller
 
     public function update(Request $request, $id)
     {
-        $abono = AbonoPrestamo::findOrFail($id);
+        $registro = AbonoPrestamo::find($id);
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
 
         // No se permite cambiar monto por seguridad
         $data = $request->validate([
@@ -59,13 +66,18 @@ class AbonoPrestamoController extends Controller
             'observaciones' => 'nullable|string',
         ]);
 
-        $abono->update($data);
-        return $abono;
+        $registro->update($data);
+        return $registro;
     }
 
     public function destroy($id)
     {
-        $abono = AbonoPrestamo::findOrFail($id);
+        $registro = AbonoPrestamo::find($id);
+
+        if (!$registro) {
+            return response()->json(['error' => 'Registro no encontrado'], 404);
+        }
+
         $prestamo = $abono->prestamo;
 
         // Revertir saldo si se elimina abono
@@ -74,8 +86,8 @@ class AbonoPrestamoController extends Controller
         $prestamo->fecha_pagado = NULL;
         $prestamo->save();
 
-        $abono->delete();
+        $registro->delete();
 
-        return response()->json(['message' => 'Registro eliminado']);
+        return response()->json(['message' => 'Registro eliminado con éxito']);
     }
 }

@@ -18,7 +18,9 @@ return new class extends Migration
             $table->string('nombre_completo');
             $table->string('email')->unique();
             $table->string('password');
-            $table->foreignId('rol_id')->constrained('roles')->onDelete('cascade');
+            $table->foreignId('rol_id')->constrained('roles')->onDelete('restrict');
+            $table->foreignId('guardia_id')->nullable()->constrained('guardias')->onDelete('set null');
+            $table->mediumText('foto')->default('default.png');
             $table->timestamps();
         });
     }
