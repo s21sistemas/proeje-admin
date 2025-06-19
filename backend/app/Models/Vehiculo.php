@@ -33,10 +33,6 @@ class Vehiculo extends Model
 
     public function getFotosVehiculoUrlAttribute()
     {
-        if (!$this->fotos_vehiculo) {
-            return null;
-        }
-
-        return asset("storage/fotos_vehiculos/{$this->fotos_vehiculo}");
+        return route('vehiculos.descargarZip', $this->id);
     }
 }

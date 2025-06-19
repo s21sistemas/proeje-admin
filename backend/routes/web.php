@@ -13,6 +13,7 @@ use App\Http\Controllers\ReporteIncidenteGuardiaController;
 use App\Http\Controllers\ReporteSupervisorController;
 use App\Http\Controllers\ReporteBitacoraController;
 use App\Http\Controllers\ReportePatrullaController;
+use App\Http\Controllers\VehiculoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,8 @@ Route::get('/api/pdf/reporte-guardia/{id}', [ReporteGuardiaController::class, 'g
 Route::get('/api/pdf/reporte-supervisor/{id}', [ReporteSupervisorController::class, 'generarReporteSupervisor']);
 Route::get('/api/pdf/reporte-bitacoras/{id}', [ReporteBitacoraController::class, 'generarReporteBitacora']);
 Route::get('/api/pdf/reporte-patrullas/{id}', [ReportePatrullaController::class, 'generarReportePatrulla']);
+
+Route::get('/vehiculos/descargar-zip/{vehiculo}',[VehiculoController::class, 'descargarZip'])->name('vehiculos.descargarZip');
 
 // Route::get('/cmd/{command}', function($command){
 //     Artisan::call($command);

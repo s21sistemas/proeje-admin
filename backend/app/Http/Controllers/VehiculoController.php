@@ -6,6 +6,7 @@ use App\Models\Vehiculo;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use ZipArchive;
 
 class VehiculoController extends Controller
@@ -166,6 +167,23 @@ class VehiculoController extends Controller
         }
 
         return $nombreZip;
+    }
+
+    public function descargarZip(Vehiculo $vehiculo): StreamedResponse
+    {
+        if (!$vehiculo->fotos_vehiculo) {
+            abort(404, 'El vehículo no tiene fotos asociadas');
+        }
+
+        $ruta = "fotos_vehiculos/{$vehiculo->fotos_vehiculo}";
+
+        if (!Storage::disk('public')->exists($ruta)) {
+            abort(404, 'Archivo no encontrado en el servidor');
+        }
+
+        // Opcional: comprueba permisos aquí (roles, guards, etc.)
+
+        return Storage::disk('public')->download($ruta);
     }
 
     // eliminar ZIP de fotos

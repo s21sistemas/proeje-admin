@@ -7,6 +7,7 @@ use App\Models\ReporteIncidenteGuardia;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Helpers\RevisarOrdenSupervisor;
+use App\Helpers\ImageHelper;
 
 class ReporteIncidenteGuardiaController extends Controller
 {
@@ -79,7 +80,7 @@ class ReporteIncidenteGuardiaController extends Controller
 
         $base64Foto = null;
         if ($reporteIncidente->foto) {
-            $imageData = file_get_contents($reporteIncidente->foto);
+            $imageData = ImageHelper::get($reporteIncidente->foto);
             $base64Foto = 'data:image/jpeg;base64,' . base64_encode($imageData);
         }
 

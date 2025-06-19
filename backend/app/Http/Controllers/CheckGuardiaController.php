@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\RevisarOrdenSupervisor;
+use App\Helpers\ImageHelper;
 
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\CheckGuardia;
@@ -184,7 +185,7 @@ class CheckGuardiaController extends Controller
         $base64Fotos = [];
 
         foreach ($fotos as $foto) {
-            $imageData = file_get_contents($foto);
+            $imageData = ImageHelper::get($foto);
             $base64Foto = base64_encode($imageData);
             $base64Fotos[] = 'data:image/jpeg;base64,' . $base64Foto;
         }
