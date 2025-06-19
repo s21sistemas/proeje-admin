@@ -65,7 +65,9 @@ export const FormVentas = () => {
               onChange={handleInputChange}
               disabled={
                 ['Cancelada', 'Pagada', 'Vencida'].includes(formData.estatus) ||
-                ['fecha_vencimiento', 'cotizacion_id'].includes(name)
+                ['cotizacion_id'].includes(name) ||
+                (formData.tipo_pago === 'Contado' &&
+                  name === 'fecha_vencimiento')
                   ? true
                   : view
               }

@@ -106,7 +106,7 @@ class VentaController extends Controller
         $data['total'] = $request->nota_credito > 0 ? $cotizacion->total - $request->nota_credito : $cotizacion->total;
 
         $referencia = 'VENTA-' . ($data['numero_factura'] ?? $registro->numero_factura) . '-' . $registro->id;
-        if($data['metodo_pago'] === 'Transferencia bancaria' || $data['metodo_pago'] === 'Tarjeta de crédito/débito'){
+        if($request->metodo_pago === 'Transferencia bancaria' || $request->metodo_pago === 'Tarjeta de crédito/débito'){
             $referencia = $data['referencia'];
         }else{
             $data['referencia'] = null;
