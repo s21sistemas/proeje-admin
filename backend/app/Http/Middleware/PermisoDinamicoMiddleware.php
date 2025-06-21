@@ -28,11 +28,11 @@ class PermisoDinamicoMiddleware
             'jefes-sucursal'                   => 'guardias',
             'prestamos-pendientes'             => 'guardias',
             'generar-estadocuenta-guardia'     => 'guardias',
-            'generar-estadocuenta-banco'       => 'guardias',
-            'generar-estadocuenta-cliente'     => 'guardias',
-            'generar-estadocuenta-proveedor'   => 'guardias',
-            'generar-horastrabajadas-guardia'   => 'guardias',
-            'sucursales-cliente'               => 'guardias',
+            'generar-estadocuenta-banco'       => 'bancos',
+            'generar-estadocuenta-cliente'     => 'clientes',
+            'generar-estadocuenta-proveedor'   => 'proveedores',
+            'generar-horastrabajadas-guardia'  => 'guardias',
+            'sucursales-cliente'               => 'clientes',
             'articulos-asignar'                => 'articulos',
             'vehiculos-disponibles'            => 'vehiculos',
             'ventas-orden-servicio'            => 'ventas',
@@ -40,14 +40,14 @@ class PermisoDinamicoMiddleware
             'ventas-egresos-mensuales'         => 'ventas',
             'almacen-disponibles'              => 'almacen',
             'equipamiento-completo'            => 'guardias',
-            'equipo-disponible/{articulo_id}'  => 'clientes',
+            'equipo-disponible'                => 'almacen',
 
-            'check-blacklist'                  => 'clientes',
+            'check-blacklist'                  => 'guardias',
             'generador-reportes'               => 'clientes',
             'reporte-rh'                       => 'clientes',
         ];
 
-        $path = $request->path(); // ejemplo: api/sucursales-empresa/5
+        $path = $request->path();
         $uri = explode('/', $path);
 
         // Ignora el prefijo "api" si existe
