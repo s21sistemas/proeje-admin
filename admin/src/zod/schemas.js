@@ -15,9 +15,18 @@ export const sucursalEmpresaSchema = z.object({
   correo_contacto: z
     .string({ required_error: 'El correo de contacto es requerido' })
     .email('El correo de contacto no es válido'),
-  cp: z
-    .string({ required_error: 'El código postal es requerido' })
-    .regex(/^\d{5}$/, 'El código postal debe tener exactamente 5 dígitos'),
+  cp: z.preprocess(
+    (val) =>
+      typeof val === 'number' ? String(val).padStart(5, '0') : String(val),
+    z
+      .string({
+        required_error: 'El código postal es requerido',
+        invalid_type_error: 'El código postal debe ser un string válido'
+      })
+      .regex(/^\d{5}$/, {
+        message: 'El código postal debe tener exactamente 5 dígitos'
+      })
+  ),
   telefono_sucursal: z
     .string({ required_error: 'El teléfono de la sucursal es requerido' })
     .min(10, 'El teléfono de la sucursal debe tener al menos 10 dígitos')
@@ -46,15 +55,14 @@ export const guardiaSchema = z.object({
       /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/,
       'El apellido materno solo puede contener letras'
     ),
-  edad: z
-    .string({ required_error: 'La edad es requerida' })
-    .refine((val) => !isNaN(Number(val)), {
-      message: 'La edad debe ser un número válido'
+  edad: z.coerce
+    .number({
+      required_error: 'La edad es requerida',
+      invalid_type_error: 'La edad debe ser un número válido'
     })
-    .transform((val) => Number(val))
-    .refine((val) => val >= 18 && val <= 99, {
-      message: 'La edad debe estar entre 18 y 99 años'
-    }),
+    .int()
+    .gte(18, { message: 'La edad debe estar entre 18 y 99 años' })
+    .lte(99, { message: 'La edad debe estar entre 18 y 99 años' }),
   telefono: z
     .string({ required_error: 'El teléfono del guardia es requerido' })
     .min(10, 'El teléfono del guardia debe tener al menos 10 dígitos')
@@ -62,9 +70,18 @@ export const guardiaSchema = z.object({
   correo: z
     .string({ required_error: 'El correo del guardia es requerido' })
     .email('El correo del guardia no es válido'),
-  cp: z
-    .string({ required_error: 'El código postal es requerido' })
-    .regex(/^\d{5}$/, 'El código postal debe tener exactamente 5 dígitos'),
+  cp: z.preprocess(
+    (val) =>
+      typeof val === 'number' ? String(val).padStart(5, '0') : String(val),
+    z
+      .string({
+        required_error: 'El código postal es requerido',
+        invalid_type_error: 'El código postal debe ser un string válido'
+      })
+      .regex(/^\d{5}$/, {
+        message: 'El código postal debe tener exactamente 5 dígitos'
+      })
+  ),
   telefono_emergencia: z
     .string({ required_error: 'El teléfono de emergencia es requerido' })
     .min(10, 'El teléfono de emergencia debe tener al menos 10 dígitos')
@@ -125,9 +142,18 @@ export const clienteSchema = z.object({
     .string({ required_error: 'El correo del contacto operativo es requerido' })
     .email('El correo del contacto operativo no es válido'),
 
-  cp: z
-    .string({ required_error: 'El código postal es requerido' })
-    .regex(/^\d{5}$/, 'El código postal debe tener exactamente 5 dígitos'),
+  cp: z.preprocess(
+    (val) =>
+      typeof val === 'number' ? String(val).padStart(5, '0') : String(val),
+    z
+      .string({
+        required_error: 'El código postal es requerido',
+        invalid_type_error: 'El código postal debe ser un string válido'
+      })
+      .regex(/^\d{5}$/, {
+        message: 'El código postal debe tener exactamente 5 dígitos'
+      })
+  ),
   telefono_empresa: z
     .string({ required_error: 'El teléfono de la empresa es requerido' })
     .min(10, 'El teléfono de la empresa debe tener al menos 10 dígitos')
@@ -153,9 +179,18 @@ export const sucursalClienteSchema = z.object({
   correo_contacto: z
     .string({ required_error: 'El correo de contacto es requerido' })
     .email('El correo de contacto no es válido'),
-  cp: z
-    .string({ required_error: 'El código postal es requerido' })
-    .regex(/^\d{5}$/, 'El código postal debe tener exactamente 5 dígitos'),
+  cp: z.preprocess(
+    (val) =>
+      typeof val === 'number' ? String(val).padStart(5, '0') : String(val),
+    z
+      .string({
+        required_error: 'El código postal es requerido',
+        invalid_type_error: 'El código postal debe ser un string válido'
+      })
+      .regex(/^\d{5}$/, {
+        message: 'El código postal debe tener exactamente 5 dígitos'
+      })
+  ),
   telefono_empresa: z
     .string({ required_error: 'El teléfono de la sucursal es requerido' })
     .min(10, 'El teléfono de la sucursal debe tener al menos 10 dígitos')
@@ -181,9 +216,18 @@ export const proveedorSchema = z.object({
   correo_contacto: z
     .string({ required_error: 'El correo de contacto es requerido' })
     .email('El correo de contacto no es válido'),
-  cp: z
-    .string({ required_error: 'El código postal es requerido' })
-    .regex(/^\d{5}$/, 'El código postal debe tener exactamente 5 dígitos'),
+  cp: z.preprocess(
+    (val) =>
+      typeof val === 'number' ? String(val).padStart(5, '0') : String(val),
+    z
+      .string({
+        required_error: 'El código postal es requerido',
+        invalid_type_error: 'El código postal debe ser un string válido'
+      })
+      .regex(/^\d{5}$/, {
+        message: 'El código postal debe tener exactamente 5 dígitos'
+      })
+  ),
   telefono_empresa: z
     .string({ required_error: 'El teléfono de la empresa es requerido' })
     .min(10, 'El teléfono de la empresa debe tener al menos 10 dígitos')
@@ -213,8 +257,18 @@ export const cotizacionSchema = z.object({
     .email('El correo no es válido')
     .optional(),
   cp: z
-    .string({ required_error: 'El código postal es requerido' })
-    .regex(/^\d{5}$/, 'El código postal debe tener exactamente 5 dígitos')
+    .preprocess(
+      (val) =>
+        typeof val === 'number' ? String(val).padStart(5, '0') : String(val),
+      z
+        .string({
+          required_error: 'El código postal es requerido',
+          invalid_type_error: 'El código postal debe ser un string válido'
+        })
+        .regex(/^\d{5}$/, {
+          message: 'El código postal debe tener exactamente 5 dígitos'
+        })
+    )
     .optional(),
   telefono_empresa: z
     .string({ required_error: 'El teléfono de la empresa es requerido' })
