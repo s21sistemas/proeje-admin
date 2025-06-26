@@ -84,7 +84,7 @@
         <p class="text-provee"><strong>Dirección:</strong> {{ $data['proveedor']['calle'] }} {{ $data['proveedor']['numero'] }}, {{ $data['proveedor']['colonia'] }}, {{ $data['proveedor']['municipio'] }}, {{ $data['proveedor']['estado'] }}, CP: {{ $data['proveedor']['cp'] }}, {{ $data['proveedor']['pais'] }}</p>
         <p class="text-provee"><strong>Teléfono Empresa:</strong> {{ $data['proveedor']['telefono_empresa'] }} Ext: {{ $data['proveedor']['extension_empresa'] }}</p>
         <p class="text-provee"><strong>Contacto:</strong> {{ $data['proveedor']['nombre_contacto'] }} | {{ $data['proveedor']['telefono_contacto'] }} | WhatsApp: {{ $data['proveedor']['whatsapp_contacto'] }}</p>
-        <p class="text-provee"><strong>Correo:</strong> {{ $data['proveedor']['correo'] }}</p>
+        <p class="text-provee"><strong>Correo:</strong> {{ $data['proveedor']['correo_contacto'] }}</p>
         <p class="text-provee"><strong>Días de Crédito:</strong> {{ $data['proveedor']['credito_dias'] ?? 'No definido' }}</p>
     </div>
 

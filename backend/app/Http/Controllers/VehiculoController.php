@@ -196,7 +196,7 @@ class VehiculoController extends Controller
     }
 
     // * Función para subir un documento
-    private function subirDocumento($archivo, )
+    private function subirDocumento($archivo)
     {
         $nombre = time() . '_' . uniqid() . '.' . $archivo->extension();
         $archivo->storeAs("public/seguros_vehiculos/", $nombre);

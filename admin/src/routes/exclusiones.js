@@ -26,6 +26,7 @@ export const EXCLUDE_DELETE = [
 export const EXCLUDE_CREATE = [
   '/compras',
   '/almacen',
+  '/cartera-vencida',
   ...EXCLUDE_GENERAL,
   ...EXCLUDE_EDIT,
   '/recorridos-guardia',
